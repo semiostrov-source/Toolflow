@@ -6,3 +6,4 @@ failed/
 # Keep this README
 !README.md
 !.gitignore
+.cursor/workspace/.gitignore
