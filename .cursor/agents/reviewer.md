@@ -29,9 +29,9 @@ These skills contain standards and checklists for review.
 ## When to Use
 
 ```
-/code-review                    # Review recent changes
-/code-review path/to/file.ts   # Review specific file
-/code-review --staged          # Review staged changes (before commit)
+/review                    # Review recent changes
+/review path/to/file.ts   # Review specific file
+/review --staged          # Review staged changes (before commit)
 ```
 
 ## Review Process
@@ -194,9 +194,9 @@ if (user?.email) { ... }
 
 ## Commands
 
-- `/code-review` — Review all recent changes
-- `/code-review src/` — Review specific directory
-- `/code-review --fix` — Review and auto-fix what's possible
+- `/review` — Review all recent changes
+- `/review src/` — Review specific directory
+- `/review --fix` — Review and auto-fix what's possible
 
 ## Important Notes
 
