@@ -1,137 +1,360 @@
 # ToolFlow Product Definition
 
-## Product Overview
+## 1. Product Overview
 
-ToolFlow is an internal web application designed to manage and track company tools and equipment.
+ToolFlow is a multi-company internal web platform for tool, equipment, and material tracking.
 
-The system allows teams to keep an accurate inventory of tools, track their current location, monitor usage history, and manage tool issuance and returns between employees.
+It is designed for construction and field operations where tools and materials move between warehouses, employees, and project sites. The system must provide operational visibility, accountability, and a clear movement history for every tracked item.
 
-The main goal of ToolFlow is to improve operational visibility and reduce tool loss, misplacement, and inefficiencies in tool management.
+ToolFlow is not a simple inventory list. It is an operational system for real-world tool movement, responsibility assignment, service tracking, write-off approval, and company-level access control.
+
+The product must work well on both mobile devices and desktop, with special focus on mobile-first workflows for field usage.
 
 ---
 
-## Target Users
+## 2. Product Vision
 
-The system is designed for internal company use.
+ToolFlow should become a practical, modern, fast, and reliable operational system for internal company use.
 
-Primary users include:
+The product should feel:
 
-- Site managers
-- Team leaders
-- Warehouse personnel
+- clean and modern
+- fast and responsive
+- simple to understand
+- professional and business-focused
+- optimized for real field work
+- lightweight for unstable internet conditions
+
+Design direction:
+
+- modern enterprise UX
+- minimal visual noise
+- clear status communication
+- strong emphasis on actions
+- mobile-first interaction model
+- scalable information architecture
+
+The product should follow quality expectations inspired by top-tier product companies such as Apple, Stripe, Linear, Notion, GitHub, and Airbnb, while keeping a more industrial and operational tone suitable for construction workflows.
+
+---
+
+## 3. Core Business Problems
+
+ToolFlow must solve the following problems:
+
+1. Lack of visibility into where tools and materials currently are.
+2. Unclear responsibility for issued tools.
+3. Loss of inventory due to missing movement records.
+4. Weak control over transfers between warehouse, employees, and sites.
+5. No structured history of service, damage, or write-off events.
+6. Difficulty managing both unit-based and quantity-based inventory in one system.
+7. Poor usability of spreadsheets and manual tracking methods in field conditions.
+
+---
+
+## 4. Target Users
+
+Primary user groups:
+
 - Administrators
-- Company employees who receive and return tools
+- Directors
+- Accountants
+- Warehouse staff
+- Site managers
+- Foremen
+- Team leads
+- Employees receiving or returning tools
+- Company managers reviewing operational data
 
 ---
 
-## Core Problems the Product Solves
+## 5. Multi-Company Scope
 
-1. Lack of visibility into where tools are located.
-2. Difficulty tracking which employee currently has a tool.
-3. Loss of tools due to missing records.
-4. Inefficient manual tracking using spreadsheets or paper.
-5. No centralized tool inventory.
+ToolFlow must be architected for multiple companies from the beginning.
 
----
+Requirements:
 
-## Core Product Capabilities
+- each company can access only its own data
+- each company has its own users, roles, settings, warehouses, and objects
+- the system architecture must support future scaling to many companies
+- the first working version may remain operationally simple, but the information architecture and backend model must already be multi-company ready
 
-ToolFlow should allow users to:
-
-- View the full list of tools
-- Search and filter tools
-- View tool details
-- Add new tools
-- Edit tool information
-- Issue tools to employees
-- Return tools
-- Track tool movement history
-- See tool statuses
-- View a simple dashboard with key statistics
+This means the product is not built as a single-company app that will later be “patched” into multi-company mode. Multi-company support is a foundational architectural requirement.
 
 ---
 
-## Key Entities in the System
+## 6. Localization and Naming
 
-### Tool
-Represents a physical tool.
+The system should be designed with future multilingual support in mind.
 
-Fields may include:
+Requirements:
+
+- code-level entities and naming must be in English
+- architecture should allow future localization
+- user-facing content may initially be Russian, but internal development artifacts and system naming should remain consistent and scalable
+
+---
+
+## 7. Core Domain Entities
+
+### Company
+Represents a tenant / company in the platform.
+
+Example fields:
 - id
 - name
-- category
+- status
+- settings
+- createdAt
+
+### User
+Represents a company member.
+
+Example fields:
+- id
+- companyId
+- fullName
+- roleId
+- phone
+- login
+- passwordHash
+- status
+- permissions
+- assignedWarehouseIds
+- assignedObjectIds
+
+### Role
+Represents a permission template.
+
+Example fields:
+- id
+- companyId
+- name
+- permissions
+
+### Warehouse
+Represents a storage location.
+
+Example fields:
+- id
+- companyId
+- name
+- address
+- status
+
+### Object
+Represents a project site / location / operational object.
+
+Example fields:
+- id
+- companyId
+- name
+- address
+- status
+
+### Item
+Represents an inventory position.
+
+The system must support two item types:
+
+- unit item
+- bulk item
+
+Example fields:
+- id
+- companyId
+- type
+- name
+- categoryId
+- status
+- currentHolderType
+- currentHolderId
 - serialNumber
 - inventoryNumber
-- status
-- location
-- purchaseDate
+- quantity
+- unitOfMeasure
 - photoUrl
 - notes
 
 ### Category
-Represents a tool category.
+Represents an item category.
+
+### Stock
+Represents current balance / ownership / amount in a specific holder context.
+
+Example:
+- warehouse stock
+- employee stock
+- object stock
+
+### Movement
+Represents item movement history.
 
 Examples:
-- Power tools
-- Hand tools
-- Measuring tools
-- Safety equipment
-
----
-
-### User
-Represents a system user or employee.
+- warehouse -> employee
+- employee -> employee
+- warehouse -> object
+- employee -> warehouse
+- object -> warehouse
 
 Fields may include:
 - id
-- name
-- role
-- team
-- contact information
-
----
-
-### Transaction
-Represents tool movement.
-
-Examples:
-- Tool issued to employee
-- Tool returned
-- Tool moved to storage
-- Tool sent to maintenance
-
-Fields may include:
-- id
-- toolId
-- userId
-- type
-- date
+- companyId
+- itemId
+- movementType
+- fromEntityType
+- fromEntityId
+- toEntityType
+- toEntityId
+- quantity
+- comment
+- photoBefore
+- photoAfter
+- createdBy
+- createdAt
 - status
-- notes
+
+### ServiceRequest
+Represents repair, maintenance, consumables replacement, or write-off request.
+
+### WriteOffApproval
+Represents the approval process for final disposal.
+
+Final write-off / disposal authority is restricted to:
+- administrator
+- director
+- accountant
 
 ---
 
-## Product Scope
+## 8. Item Types
 
-ToolFlow is intended to start as a simple internal system and grow gradually.
+ToolFlow must support two inventory models:
 
-Initial development will focus on:
+### Unit Items
+Examples:
+- hammer drill
+- laser level
+- grinder
+- welding machine
 
-- Tool inventory
-- Tool tracking
-- Basic dashboard
+Characteristics:
+- unique physical item
+- may have serial number or inventory number
+- moves as a whole unit
+- assigned to one responsible holder at a time
 
-More advanced features may be added later.
+### Bulk Items
+Examples:
+- electrodes
+- grinding discs
+- wire
+- scaffolding elements
+- consumables
+
+Characteristics:
+- tracked by quantity
+- can be partially transferred
+- may use units such as pcs, packs, kg, m, sets, etc.
+- can exist in balances across warehouses, employees, or objects
 
 ---
 
-## Future Possible Extensions
+## 9. Core Operational Flows
 
-Possible future modules may include:
+The system must support:
 
-- Maintenance tracking
-- Notifications
-- Analytics dashboards
-- Mobile support
-- Financial modules
-- Integration with other company systems
+- login and authenticated access
+- company-level data isolation
+- role-based access and permissions
+- warehouse management
+- object management
+- user management
+- inventory creation
+- movement between holders
+- movement history
+- service workflows
+- write-off requests
+- write-off approval
+- status tracking
+- dashboard visibility
+
+Main movement scenarios:
+
+- warehouse ↔ employee
+- employee ↔ employee
+- warehouse ↔ object
+- object ↔ warehouse
+- employee ↔ warehouse
+
+---
+
+## 10. Permissions Model
+
+The system must support role-based access with explicit permissions.
+
+Examples of permission areas:
+
+- create items
+- edit items
+- create warehouses
+- create objects
+- transfer items
+- approve transfers
+- create service requests
+- approve write-off
+- manage users
+- manage roles
+- view reports
+- access admin panel
+
+The UI must reflect permissions clearly:
+- unavailable actions must not behave like enabled ones
+- hidden or disabled actions must be consistent with product rules
+
+---
+
+## 11. Product UX Principles
+
+The product must follow these UX principles:
+
+- mobile-first
+- fast interaction
+- low cognitive load
+- large tap targets
+- simple navigation
+- clear action hierarchy
+- clear status communication
+- lightweight pages
+- stable behavior under weak internet conditions
+- reduced visual clutter
+- readable information density
+
+The product should support future offline-friendly improvements such as local caching, retry logic, and protection against action loss in poor connectivity scenarios.
+
+---
+
+## 12. Non-Goals for Early Development
+
+The early product should avoid unnecessary complexity such as:
+
+- marketing website features
+- public marketplace behavior
+- overcomplicated dashboards
+- startup-style decorative interactions
+- premature integrations not required for core field operations
+
+---
+
+## 13. Product Success Criteria
+
+ToolFlow is successful if:
+
+- every company can work inside its own isolated workspace
+- users can authenticate and operate within their role permissions
+- inventory visibility is clear
+- responsibility for tools and materials is explicit
+- movement history is reliable
+- service and write-off flows are controlled
+- the system is practical in real field usage
+- the interface feels modern, clean, and fast
