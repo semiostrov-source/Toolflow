@@ -1,73 +1,249 @@
-# React + TypeScript + Vite
+# ToolFlow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ToolFlow is an internal operational web system for managing tools,
+equipment, warehouses, and inventory flows.
 
-Currently, two official plugins are available:
+The system is designed for real operational environments: - construction
+sites - warehouses - field teams
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The goal is to build a modern internal enterprise web application with
+high‑quality UX inspired by products like Linear, Stripe, Notion, and
+GitHub, but adapted for industrial workflows and tool management.
 
-## React Compiler
+------------------------------------------------------------------------
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# Core Principles
 
-## Expanding the ESLint configuration
+The system must be:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+-   mobile-first
+-   fast
+-   simple
+-   enterprise-grade
+-   optimized for weak internet environments
+-   suitable for real operational usage
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+The interface follows a **modern minimal enterprise UI approach**.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+UI rules are defined in:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+ai_docs/design/UI_PRINCIPLES.md
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+------------------------------------------------------------------------
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+# Tech Stack
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Frontend stack:
+
+-   React
+-   TypeScript
+-   Vite
+
+The project was initialized using **Vite**.
+
+------------------------------------------------------------------------
+
+# Project Structure
+
+ToolFlow
+├ .cursor
+│ ├ agents
+│ ├ commands
+│ ├ rules
+│ ├ skills
+│ └ workspace
+│
+├ ai_docs
+│ ├ changelog
+│ ├ design
+│ │ └ UI_PRINCIPLES.md
+│ │
+│ └ develop
+│ ├ api
+│ ├ architecture
+│ ├ audits
+│ ├ components
+│ ├ features
+│ ├ issues
+│ ├ plans
+│ ├ reports
+│ ├ MVP.md
+│ ├ PRODUCT.md
+│ └ ROADMAP.md
+│
+├ public
+├ src
+│
+├ index.html
+├ package.json
+├ tsconfig.json
+├ vite.config.ts
+└ README.md
+
+------------------------------------------------------------------------
+
+# Documentation (Source of Truth)
+
+Project documentation is stored in:
+
+ai_docs/
+
+Main documentation files:
+
+-   ai_docs/develop/PRODUCT.md
+-   ai_docs/develop/MVP.md
+-   ai_docs/develop/ROADMAP.md
+-   ai_docs/design/UI_PRINCIPLES.md
+
+Additional development documentation may appear in:
+
+-   ai_docs/develop/plans
+-   ai_docs/develop/reports
+-   ai_docs/develop/issues
+-   ai_docs/develop/architecture
+-   ai_docs/develop/features
+-   ai_docs/develop/api
+-   ai_docs/develop/components
+-   ai_docs/develop/audits
+
+------------------------------------------------------------------------
+
+# Cursor AI Workflow
+
+Cursor project configuration is stored in:
+
+.cursor/
+
+Important directories:
+
+-   .cursor/agents
+-   .cursor/commands
+-   .cursor/rules
+-   .cursor/skills
+
+Main commands:
+
+-   /implement --- simple implementation workflow
+-   /orchestrate --- full feature workflow
+-   /refactor --- safe refactoring workflow
+-   /review --- code review workflow
+-   /audit --- project health and security review
+
+The project uses **AI subagent orchestration** for development tasks.
+
+Development should follow the rules defined in:
+
+.cursor/rules
+
+------------------------------------------------------------------------
+
+# Project Status
+
+Current branch: **main**
+
+Baseline checkpoint tag before development start:
+
+checkpoint-pre-build-start
+
+This tag represents the clean project state before active development
+begins.
+
+------------------------------------------------------------------------
+
+# Development Phases
+
+Development phases are defined in:
+
+ai_docs/develop/ROADMAP.md
+
+Current focus:
+
+Phase 1 --- Application shell and base UI structure\
+Phase 2 --- Core domain entities and inventory model
+
+------------------------------------------------------------------------
+
+# Local Development
+
+Install dependencies:
+
+npm install
+
+Run development server:
+
+npm run dev
+
+Build the project:
+
+npm run build
+
+Run lint:
+
+npm run lint
+
+------------------------------------------------------------------------
+
+# Development Approach
+
+Development must follow these principles:
+
+-   follow documentation in ai_docs
+-   work in small safe steps
+-   avoid destructive refactors
+-   keep architecture clean
+-   maintain mobile-first usability
+-   align UI with UI_PRINCIPLES.md
+
+------------------------------------------------------------------------
+
+# Domain Notes
+
+## Main Roles
+
+-   Administrator
+-   Director
+-   Accountant
+-   Warehouse
+-   Worker
+
+Important rule:
+
+Final write-off / disposal approval is allowed only for:
+
+-   administrator
+-   director
+-   accountant
+
+Warehouse users cannot perform final disposal actions.
+
+------------------------------------------------------------------------
+
+# Core Entities
+
+The system includes the following domain entities:
+
+-   Company
+-   User
+-   Role
+-   Warehouse
+-   Object
+-   Item
+-   Stock
+-   Movement
+-   ServiceRequest
+-   WriteOffApproval
+
+The system must support:
+
+-   unit inventory
+-   bulk inventory
+
+Bulk inventory must support **partial transfer**.
+
+------------------------------------------------------------------------
+
+# Development Goal
+
+The goal of the project is to build a modern operational web system for
+managing tools, equipment, warehouses, and operational inventory flows
+in real industrial environments.
