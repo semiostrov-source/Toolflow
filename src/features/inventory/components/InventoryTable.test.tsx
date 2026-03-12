@@ -77,9 +77,11 @@ describe('InventoryTable', () => {
 
     const viewButtons = screen.getAllByRole('button', { name: 'View' })
     const editButtons = screen.getAllByRole('button', { name: 'Edit' })
+    const moreButtons = screen.getAllByRole('button', { name: 'More' })
 
     expect(viewButtons.length).toBeGreaterThan(0)
     expect(editButtons.length).toBeGreaterThan(0)
+    expect(moreButtons.length).toBeGreaterThan(0)
   })
 })
 

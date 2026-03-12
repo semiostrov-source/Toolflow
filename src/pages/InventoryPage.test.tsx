@@ -30,6 +30,25 @@ describe('InventoryPage', () => {
     ).toBeInTheDocument()
   })
 
+  it('renders View, Edit, and More actions for at least one row', () => {
+    renderInventoryPage()
+
+    const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
+    expect(cardBoardRow).not.toBeNull()
+
+    const row = cardBoardRow as HTMLTableRowElement
+
+    expect(
+      within(row).getByRole('button', { name: 'View' }),
+    ).toBeInTheDocument()
+    expect(
+      within(row).getByRole('button', { name: 'Edit' }),
+    ).toBeInTheDocument()
+    expect(
+      within(row).getByRole('button', { name: 'More' }),
+    ).toBeInTheDocument()
+  })
+
   it('shows the empty details state before any item is selected', () => {
     renderInventoryPage()
 

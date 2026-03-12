@@ -1,11 +1,13 @@
 interface InventoryRowActionsProps {
   onView?: () => void
   onEdit?: () => void
+  onMore?: () => void
 }
 
 export function InventoryRowActions({
   onView,
   onEdit,
+  onMore,
 }: InventoryRowActionsProps) {
   return (
     <div className="inventory-table-actions">
@@ -22,6 +24,13 @@ export function InventoryRowActions({
         onClick={onEdit}
       >
         Edit
+      </button>
+      <button
+        type="button"
+        className="inventory-table-action-button"
+        onClick={onMore}
+      >
+        More
       </button>
     </div>
   )
