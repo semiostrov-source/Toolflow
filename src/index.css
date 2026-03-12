@@ -327,6 +327,66 @@ a:hover {
   color: #57606a;
 }
 
+.inventory-toolbar {
+  margin-top: 0.5rem;
+}
+
+.inventory-toolbar-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.inventory-toolbar-search {
+  flex: 1;
+}
+
+.inventory-toolbar-search-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #d0d7de;
+  font-size: 0.9rem;
+}
+
+.inventory-toolbar-search-input:focus {
+  outline: 2px solid #0969da;
+  outline-offset: 1px;
+}
+
+.inventory-toolbar-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.inventory-toolbar-add-button {
+  padding: 0.5rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #0969da;
+  background-color: #0969da;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.inventory-toolbar-add-button:hover {
+  background-color: #0756b0;
+  border-color: #0756b0;
+}
+
+@media (min-width: 640px) {
+  .inventory-toolbar-main {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .inventory-toolbar-actions {
+    justify-content: flex-end;
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #e6edf1;
@@ -389,6 +449,22 @@ a:hover {
   }
   .inventory-table-empty {
     color: #8b949e;
+  }
+  .inventory-toolbar-search-input {
+    border-color: #30363d;
+    background-color: #0d1117;
+    color: #e6edf1;
+  }
+  .inventory-toolbar-search-input:focus {
+    outline-color: #58a6ff;
+  }
+  .inventory-toolbar-add-button {
+    border-color: #238636;
+    background-color: #238636;
+  }
+  .inventory-toolbar-add-button:hover {
+    background-color: #2ea043;
+    border-color: #2ea043;
   }
   a {
     color: #58a6ff;
