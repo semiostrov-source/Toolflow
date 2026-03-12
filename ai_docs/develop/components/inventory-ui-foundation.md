@@ -38,22 +38,33 @@ A simple toolbar positioned between the page header and the inventory table. It 
 
 ### Current Behavior
 
-The toolbar is **intentionally non-functional** at this stage—it establishes the visual structure and layout for future feature development.
-
 **Features**:
-- **Search Input**: A placeholder text input (no filtering implemented yet)
+- **Search Input**: A functional text input that filters the inventory table in real-time
 - **Add Item Button**: An action button for creating new inventory items (no handler attached yet)
 - **Responsive Layout**: Flexbox-based design that adapts to mobile and desktop screens
 
+### Local Client-Side Search
+
+The toolbar now includes **local, client-side search** over the `mockItems` dataset:
+
+- **Scope**: Searches item `name` and `sku` fields
+- **Case-insensitive**: All matches are performed case-insensitively for a better user experience
+- **Real-time filtering**: Results update as the user types in the search input
+- **Backend agnostic**: Currently operates on mock data only; no backend or URL synchronization yet—purely a UI-level concern for now
+- **Empty state handling**: When the selected item is filtered out, the selection is cleared and the details panel reverts to its empty state
+
 ### Props
 
-Currently no props required. The component renders the toolbar UI independently.
+| Prop | Type | Purpose |
+|------|------|---------|
+| `searchQuery` | `string` | Current search input value |
+| `onSearchChange` | `(query: string) => void` | Callback fired when the user types; updates parent state |
 
 ### Future Enhancements
 
-- Connect search input to filter the `InventoryTable` by item name or SKU
 - Implement "Add Item" modal or form for creating new inventory entries
 - Add additional toolbar actions (export, bulk operations, etc.)
+- Backend search integration (URL sync, server-side filtering)
 
 ---
 
@@ -200,7 +211,6 @@ On mobile screens, the layout stacks vertically with the table above and details
 ## Next Steps
 
 1. **Filter implementation** — Wire Warehouse and Unit selects to filter table results
-2. **Search functionality** — Connect search input to filter table by name/SKU
-3. **Row actions** — Implement View and Edit navigation handlers
-4. **Add Item workflow** — Implement modal/form and create action
-5. **Backend integration** — Replace `mockItems` with API endpoints
+2. **Row actions** — Implement View and Edit navigation handlers
+3. **Add Item workflow** — Implement modal/form and create action
+4. **Backend integration** — Replace `mockItems` with API endpoints and add server-side search

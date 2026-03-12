@@ -2,13 +2,18 @@ import type { Item } from '..'
 import { mockItems } from '../mock/items'
 
 interface InventoryTableProps {
+  items?: Item[]
   selectedItemId?: string
   onSelectItem?: (item: Item) => void
 }
 
-export function InventoryTable({ selectedItemId, onSelectItem }: InventoryTableProps) {
-  const items = mockItems
-  const hasItems = items.length > 0
+export function InventoryTable({
+  items,
+  selectedItemId,
+  onSelectItem,
+}: InventoryTableProps) {
+  const itemsToRender = items ?? mockItems
+  const hasItems = itemsToRender.length > 0
 
   return (
     <section className="page-section">
@@ -25,7 +30,7 @@ export function InventoryTable({ selectedItemId, onSelectItem }: InventoryTableP
           </thead>
           <tbody>
             {hasItems ? (
-              items.map((item) => {
+              itemsToRender.map((item) => {
                 const isSelected = item.id === selectedItemId
 
                 return (

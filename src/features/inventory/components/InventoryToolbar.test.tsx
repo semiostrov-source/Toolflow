@@ -4,13 +4,17 @@ import { InventoryToolbar } from './InventoryToolbar'
 
 describe('InventoryToolbar', () => {
   it('renders a search input', () => {
-    render(<InventoryToolbar />)
+    render(
+      <InventoryToolbar searchQuery="" onSearchChange={() => {}} />,
+    )
 
     expect(screen.getByPlaceholderText('Search items')).toBeInTheDocument()
   })
 
   it('renders an "Add Item" button', () => {
-    render(<InventoryToolbar />)
+    render(
+      <InventoryToolbar searchQuery="" onSearchChange={() => {}} />,
+    )
 
     expect(screen.getByRole('button', { name: 'Add Item' })).toBeInTheDocument()
   })

@@ -83,7 +83,7 @@ describe('InventoryPage', () => {
     expect(
       screen.getByText('Recent movements (placeholder)'),
     ).toBeInTheDocument()
-
+ 
     const table = screen.getByRole('table')
     const rows = within(table).getAllByRole('row')
     const selectedRow = rows.find((row) =>
@@ -94,6 +94,124 @@ describe('InventoryPage', () => {
     expect(selectedRow as HTMLElement).toHaveClass(
       'inventory-table-row--selected',
     )
+  })
+
+  it('filters items by name using the search input', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    // All items are visible before searching
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Shipping Label')).toBeInTheDocument()
+    expect(screen.getByText('Packing Tape')).toBeInTheDocument()
+
+    const searchInput = screen.getByPlaceholderText('Search items')
+
+    await user.type(searchInput, 'card')
+
+    // Cardboard Box (name contains "card") remains visible
+    expect(await screen.findByText('Cardboard Box')).toBeInTheDocument()
+
+    // Other items are filtered out
+    expect(screen.queryByText('Shipping Label')).not.toBeInTheDocument()
+    expect(screen.queryByText('Packing Tape')).not.toBeInTheDocument()
+
+    // Non-empty state should not show the empty message
+    expect(
+      screen.queryByText('No inventory items yet'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('filters items by SKU when searching', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const searchInput = screen.getByPlaceholderText('Search items')
+
+    await user.type(searchInput, 'BOX')
+
+    // Matching SKU keeps Cardboard Box visible
+    expect(await screen.findByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('BOX-001')).toBeInTheDocument()
+
+    // Non-matching items are filtered out
+    expect(screen.queryByText('Shipping Label')).not.toBeInTheDocument()
+    expect(screen.queryByText('Packing Tape')).not.toBeInTheDocument()
+  })
+
+  it('matches SKU search case-insensitively', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const searchInput = screen.getByPlaceholderText('Search items')
+
+    await user.type(searchInput, 'box-001')
+
+    // Even with different casing, the SKU still matches
+    expect(await screen.findByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('BOX-001')).toBeInTheDocument()
+  })
+
+  it('shows the empty table state when no items match the search', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const searchInput = screen.getByPlaceholderText('Search items')
+
+    await user.type(searchInput, 'no-matching-item-query')
+
+    // All item rows are gone
+    expect(screen.queryByText('Cardboard Box')).not.toBeInTheDocument()
+    expect(screen.queryByText('Shipping Label')).not.toBeInTheDocument()
+    expect(screen.queryByText('Packing Tape')).not.toBeInTheDocument()
+
+    // InventoryTable reuses its existing empty-state message
+    expect(
+      await screen.findByText('No inventory items yet'),
+    ).toBeInTheDocument()
+  })
+
+  it('clears the selected item when it is filtered out of the table', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    // Select an item to populate the details panel
+    const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
+    expect(cardBoardRow).not.toBeNull()
+
+    const viewButton = within(cardBoardRow as HTMLTableRowElement).getByRole(
+      'button',
+      { name: 'View' },
+    )
+
+    await user.click(viewButton)
+
+    // Sanity check: details panel shows the selected item
+    expect(
+      screen.queryByText('Select an inventory item to view details'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: 'Cardboard Box' }),
+    ).toBeInTheDocument()
+
+    // Apply a search that removes the selected item from the table
+    const searchInput = screen.getByPlaceholderText('Search items')
+    await user.clear(searchInput)
+    await user.type(searchInput, 'label')
+
+    // The selected item row should no longer be present
+    expect(screen.queryByText('Cardboard Box')).not.toBeInTheDocument()
+
+    // The details panel returns to its empty state
+    expect(
+      await screen.findByText('Select an inventory item to view details'),
+    ).toBeInTheDocument()
+
+    // No row remains selected
+    const selectedRow = document.querySelector(
+      '.inventory-table-row--selected',
+    )
+    expect(selectedRow).toBeNull()
   })
 })
 
