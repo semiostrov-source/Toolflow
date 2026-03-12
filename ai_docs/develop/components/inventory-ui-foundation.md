@@ -12,13 +12,34 @@ The inventory UI foundation establishes a lightweight, composable structure for 
 
 **Location**: `src/features/inventory/mock/items.ts`
 
-A centralized, development-only dataset that provides consistent test data across inventory components. All components in the inventory feature consume this shared `Item[]` array rather than defining their own inline mock data.
+A centralized, development-only dataset that provides realistic, varied test data across inventory components. All components in the inventory feature consume this shared `Item[]` array rather than defining their own inline mock data.
 
 **Purpose**:
 - Single source of truth for inventory data during development
 - Ensures consistent behavior across all components
 - Simplifies updates to mock data—change once, affects all consumers
+- Provides diverse item statuses and units for testing filter/display logic
 - Prepares for easy transition to real backend API integration
+
+**Current Dataset**:
+The mock dataset includes **12 realistic items** across different categories and status values:
+
+| Item | SKU | Unit | Status | Purpose |
+|------|-----|------|--------|---------|
+| Cardboard Box | BOX-001 | pcs | available | Basic inventory unit |
+| Shipping Label | LBL-010 | roll | in_use | Consumable tracking |
+| Packing Tape | TAPE-004 | roll | available | Common supply |
+| Wooden Pallet | PAL-020 | pcs | in_use | Example of in-use item |
+| Euro Pallet (Damaged) | PAL-021 | pcs | written_off | Retired item example |
+| Stretch Wrap Film | WRAP-100 | roll | available | Consumable item |
+| Warehouse Trolley | TROL-300 | pcs | in_use | Equipment tracking |
+| Electric Pallet Jack | LIFT-500 | pcs | maintenance | Item under repair |
+| Safety Gloves | PPE-010 | pair | available | PPE unit |
+| High-Visibility Vest | PPE-020 | pcs | in_use | Assigned PPE |
+| Handheld Barcode Scanner | SCAN-900 | pcs | maintenance | Tech in service |
+| Legacy Label Printer | PRN-OLD-01 | pcs | written_off | Obsolete equipment |
+
+**Status Distribution**: 5 available, 4 in_use, 2 maintenance, 1 written_off—representative for testing all status states.
 
 **Usage**:
 ```typescript
@@ -26,6 +47,9 @@ import { mockItems } from '../mock/items'
 
 // Use in components or tests
 const items = mockItems
+
+// Filter by status example
+const availableItems = mockItems.filter(item => item.status === 'available')
 ```
 
 ---

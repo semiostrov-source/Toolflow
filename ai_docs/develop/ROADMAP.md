@@ -120,7 +120,7 @@ Tasks:
 - [ ] Support bulk items
 - [ ] Support quantity and unit-of-measure fields
 - [ ] Support serial and inventory identifiers where applicable
-- [ ] Implement item statuses
+- [x] Implement item statuses ✓ (INV-001A)
 - [ ] Implement item ownership / holder logic
 - [ ] Implement item create flow
 - [ ] Implement item edit flow

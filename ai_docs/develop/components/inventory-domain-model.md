@@ -6,12 +6,22 @@
 
 ## Core Domain Types
 
+### `ItemStatus`
+A union type describing the operational availability of an inventory item.
+- `'available'`: Item is in stock and ready for use
+- `'in_use'`: Item is currently assigned to or held by a user or location
+- `'maintenance'`: Item is undergoing repair or service
+- `'written_off'`: Item has been removed from inventory (damaged, obsolete, etc.)
+
+This status is intentionally coarse-grained and focused on **operational availability**, not detailed maintenance workflows. It answers: "Can I use this item right now?"
+
 ### `Item`
 Represents a catalog item in the inventory system.
 - `id` (string): Unique identifier
 - `name` (string): Display name
 - `sku` (string): Stock keeping unit for external systems
 - `unit` (string): Unit of measure (e.g., "kg", "pcs", "m")
+- `status` (ItemStatus): Operational lifecycle status of the item (required)
 - `createdAt` (ISO string): When the item was created
 
 ### `Stock`

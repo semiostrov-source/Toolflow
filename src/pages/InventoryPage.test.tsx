@@ -3,6 +3,7 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { InventoryPage } from './InventoryPage'
+import { mockItems } from '../features/inventory/mock/items'
 
 function renderInventoryPage() {
   return render(
@@ -221,21 +222,23 @@ describe('InventoryPage', () => {
     const sortFieldSelect = screen.getByLabelText('Sort by')
     const sortDirectionSelect = screen.getByLabelText('Direction')
 
+    const expectedAscNames = [...mockItems]
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((item) => item.name)
+
+    const expectedDescNames = [...expectedAscNames].reverse()
+
     // Name ascending
     await user.selectOptions(sortFieldSelect, 'name')
     await user.selectOptions(sortDirectionSelect, 'asc')
 
     const tableAsc = screen.getByRole('table')
     const rowsAsc = within(tableAsc).getAllByRole('row').slice(1)
-    const namesAsc = rowsAsc.map((row) =>
-      row.querySelector('td')?.textContent?.trim(),
+    const namesAsc = rowsAsc.map(
+      (row) => row.querySelector('td')?.textContent?.trim() ?? '',
     )
 
-    expect(namesAsc).toEqual([
-      'Cardboard Box',
-      'Packing Tape',
-      'Shipping Label',
-    ])
+    expect(namesAsc).toEqual(expectedAscNames)
 
     // Name descending
     await user.selectOptions(sortFieldSelect, 'name')
@@ -243,15 +246,11 @@ describe('InventoryPage', () => {
 
     const tableDesc = screen.getByRole('table')
     const rowsDesc = within(tableDesc).getAllByRole('row').slice(1)
-    const namesDesc = rowsDesc.map((row) =>
-      row.querySelector('td')?.textContent?.trim(),
+    const namesDesc = rowsDesc.map(
+      (row) => row.querySelector('td')?.textContent?.trim() ?? '',
     )
 
-    expect(namesDesc).toEqual([
-      'Shipping Label',
-      'Packing Tape',
-      'Cardboard Box',
-    ])
+    expect(namesDesc).toEqual(expectedDescNames)
   })
 
   it('sorts items by Created ascending and descending', async () => {
@@ -261,21 +260,26 @@ describe('InventoryPage', () => {
     const sortFieldSelect = screen.getByLabelText('Sort by')
     const sortDirectionSelect = screen.getByLabelText('Direction')
 
+    const expectedAscNamesByCreated = [...mockItems]
+      .sort(
+        (a, b) =>
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+      )
+      .map((item) => item.name)
+
+    const expectedDescNamesByCreated = [...expectedAscNamesByCreated].reverse()
+
     // Created ascending
     await user.selectOptions(sortFieldSelect, 'created')
     await user.selectOptions(sortDirectionSelect, 'asc')
 
     const tableAsc = screen.getByRole('table')
     const rowsAsc = within(tableAsc).getAllByRole('row').slice(1)
-    const namesAsc = rowsAsc.map((row) =>
-      row.querySelector('td')?.textContent?.trim(),
+    const namesAsc = rowsAsc.map(
+      (row) => row.querySelector('td')?.textContent?.trim() ?? '',
     )
 
-    expect(namesAsc).toEqual([
-      'Cardboard Box',
-      'Shipping Label',
-      'Packing Tape',
-    ])
+    expect(namesAsc).toEqual(expectedAscNamesByCreated)
 
     // Created descending
     await user.selectOptions(sortFieldSelect, 'created')
@@ -283,15 +287,11 @@ describe('InventoryPage', () => {
 
     const tableDesc = screen.getByRole('table')
     const rowsDesc = within(tableDesc).getAllByRole('row').slice(1)
-    const namesDesc = rowsDesc.map((row) =>
-      row.querySelector('td')?.textContent?.trim(),
+    const namesDesc = rowsDesc.map(
+      (row) => row.querySelector('td')?.textContent?.trim() ?? '',
     )
 
-    expect(namesDesc).toEqual([
-      'Packing Tape',
-      'Shipping Label',
-      'Cardboard Box',
-    ])
+    expect(namesDesc).toEqual(expectedDescNamesByCreated)
   })
 
   it('keeps selected item selected after sorting when still present', async () => {
