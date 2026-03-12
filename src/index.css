@@ -241,6 +241,49 @@ a:hover {
   color: #57606a;
 }
 
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.page-header-main {
+  min-width: 0;
+}
+
+.page-header-title {
+  margin: 0;
+}
+
+.page-header-description {
+  margin-top: 0.125rem;
+  font-size: 0.9rem;
+}
+
+.page-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .page-header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+}
+
+.page-section {
+  margin-top: 0.25rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #e6edf0;
+  font-size: 0.9rem;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #e6edf1;
@@ -286,6 +329,10 @@ a:hover {
   }
   .page-container p {
     color: #8b949e;
+  }
+  .page-section {
+    background: #161b22;
+    border-color: #30363d;
   }
   a {
     color: #58a6ff;

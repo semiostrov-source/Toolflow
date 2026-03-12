@@ -1,8 +1,18 @@
+import { PageHeader } from '../shared/ui'
+
 export function RequestsPage() {
   return (
-    <main>
-      <h1>Requests</h1>
-      <p>Service and write-off requests.</p>
-    </main>
+    <>
+      <PageHeader
+        title="Requests"
+        description="Service and write-off requests that will support lifecycle workflows."
+      />
+      <section className="page-section">
+        <p>
+          This screen will host upcoming flows for tracking service, repair, and
+          write-off requests.
+        </p>
+      </section>
+    </>
   )
 }

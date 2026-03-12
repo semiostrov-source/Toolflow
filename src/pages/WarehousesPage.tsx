@@ -1,8 +1,18 @@
+import { PageHeader } from '../shared/ui'
+
 export function WarehousesPage() {
   return (
-    <main>
-      <h1>Warehouses</h1>
-      <p>Storage locations.</p>
-    </main>
+    <>
+      <PageHeader
+        title="Warehouses"
+        description="Overview of storage locations that will hold inventory."
+      />
+      <section className="page-section">
+        <p>
+          This page will show the list of warehouses and basic location details
+          for planning and operations.
+        </p>
+      </section>
+    </>
   )
 }
