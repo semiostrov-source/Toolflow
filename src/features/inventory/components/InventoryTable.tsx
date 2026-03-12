@@ -1,6 +1,7 @@
 import type { Item } from '..'
 import { StatusBadge } from './StatusBadge'
 import { mockItems } from '../mock/items'
+import { InventoryRowActions } from './InventoryRowActions'
 
 interface InventoryTableProps {
   items?: Item[]
@@ -51,21 +52,10 @@ export function InventoryTable({
                       {new Date(item.createdAt).toLocaleDateString()}
                     </td>
                     <td className="inventory-table-cell">
-                      <div className="inventory-table-actions">
-                        <button
-                          type="button"
-                          className="inventory-table-action-button"
-                          onClick={() => onSelectItem?.(item)}
-                        >
-                          View
-                        </button>
-                        <button
-                          type="button"
-                          className="inventory-table-action-button"
-                        >
-                          Edit
-                        </button>
-                      </div>
+                      <InventoryRowActions
+                        onView={() => onSelectItem?.(item)}
+                        onEdit={undefined}
+                      />
                     </td>
                   </tr>
                 )
