@@ -1,4 +1,5 @@
 import type { Item } from '..'
+import { StatusBadge } from './StatusBadge'
 
 interface InventoryDetailsPanelProps {
   item: Item | null
@@ -18,7 +19,10 @@ export function InventoryDetailsPanel({ item }: InventoryDetailsPanelProps) {
   return (
     <section className="page-section inventory-details">
       <header className="inventory-details-header">
-        <h2 className="inventory-details-title">{item.name}</h2>
+        <h2 className="inventory-details-title">
+          {item.name}
+          <StatusBadge status={item.status} />
+        </h2>
         <p className="inventory-details-subtitle">
           SKU {item.sku} · {item.unit}
         </p>

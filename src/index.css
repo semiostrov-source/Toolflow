@@ -500,6 +500,38 @@ a:hover {
   color: #57606a;
 }
 
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.status-badge--available {
+  background-color: #dafbe1;
+  color: #1a7f37;
+}
+
+.status-badge--in_use {
+  background-color: #ddf4ff;
+  color: #0969da;
+}
+
+.status-badge--maintenance {
+  background-color: #fff8c5;
+  color: #9a6700;
+}
+
+.status-badge--written_off {
+  background-color: #ffebe9;
+  color: #cf222e;
+}
+
 .inventory-table-action-button {
   padding: 0.25rem 0.6rem;
   border-radius: 999px;
@@ -646,5 +678,25 @@ a:hover {
   }
   a {
     color: #58a6ff;
+  }
+
+  .status-badge--available {
+    background-color: #033a16;
+    color: #7ee787;
+  }
+
+  .status-badge--in_use {
+    background-color: #0b2447;
+    color: #79c0ff;
+  }
+
+  .status-badge--maintenance {
+    background-color: #3f2500;
+    color: #e3b341;
+  }
+
+  .status-badge--written_off {
+    background-color: #3c0613;
+    color: #ff7b72;
   }
 }

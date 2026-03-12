@@ -1,4 +1,5 @@
 import type { Item } from '..'
+import { StatusBadge } from './StatusBadge'
 import { mockItems } from '../mock/items'
 
 interface InventoryTableProps {
@@ -42,6 +43,7 @@ export function InventoryTable({
                   >
                     <td className="inventory-table-cell inventory-table-cell--primary">
                       {item.name}
+                      <StatusBadge status={item.status} />
                     </td>
                     <td className="inventory-table-cell">{item.sku}</td>
                     <td className="inventory-table-cell">{item.unit}</td>

@@ -57,7 +57,7 @@ describe('InventoryPage', () => {
     ).not.toBeInTheDocument()
 
     expect(
-      screen.getByRole('heading', { name: 'Cardboard Box' }),
+      screen.getByRole('heading', { name: /Cardboard Box/ }),
     ).toBeInTheDocument()
     expect(
       screen.getByText('SKU BOX-001 · pcs'),
@@ -192,7 +192,7 @@ describe('InventoryPage', () => {
       screen.queryByText('Select an inventory item to view details'),
     ).not.toBeInTheDocument()
     expect(
-      screen.getByRole('heading', { name: 'Cardboard Box' }),
+      screen.getByRole('heading', { name: /Cardboard Box/ }),
     ).toBeInTheDocument()
 
     // Apply a search that removes the selected item from the table
