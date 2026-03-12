@@ -1,6 +1,12 @@
+import type { Item } from '..'
 import { mockItems } from '../mock/items'
 
-export function InventoryTable() {
+interface InventoryTableProps {
+  selectedItemId?: string
+  onSelectItem?: (item: Item) => void
+}
+
+export function InventoryTable({ selectedItemId, onSelectItem }: InventoryTableProps) {
   const items = mockItems
   const hasItems = items.length > 0
 
@@ -14,26 +20,53 @@ export function InventoryTable() {
               <th scope="col">SKU</th>
               <th scope="col">Unit</th>
               <th scope="col">Created</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
             {hasItems ? (
-              items.map((item) => (
-                <tr key={item.id} className="inventory-table-row">
-                  <td className="inventory-table-cell inventory-table-cell--primary">
-                    {item.name}
-                  </td>
-                  <td className="inventory-table-cell">{item.sku}</td>
-                  <td className="inventory-table-cell">{item.unit}</td>
-                  <td className="inventory-table-cell">
-                    {new Date(item.createdAt).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))
+              items.map((item) => {
+                const isSelected = item.id === selectedItemId
+
+                return (
+                  <tr
+                    key={item.id}
+                    className={`inventory-table-row${
+                      isSelected ? ' inventory-table-row--selected' : ''
+                    }`}
+                  >
+                    <td className="inventory-table-cell inventory-table-cell--primary">
+                      {item.name}
+                    </td>
+                    <td className="inventory-table-cell">{item.sku}</td>
+                    <td className="inventory-table-cell">{item.unit}</td>
+                    <td className="inventory-table-cell">
+                      {new Date(item.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="inventory-table-cell">
+                      <div className="inventory-table-actions">
+                        <button
+                          type="button"
+                          className="inventory-table-action-button"
+                          onClick={() => onSelectItem?.(item)}
+                        >
+                          View
+                        </button>
+                        <button
+                          type="button"
+                          className="inventory-table-action-button"
+                        >
+                          Edit
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })
             ) : (
               <tr className="inventory-table-empty-row">
-                <td colSpan={4} className="inventory-table-empty">
-                  No inventory items yet.
+                <td colSpan={5} className="inventory-table-empty">
+                  No inventory items yet
                 </td>
               </tr>
             )}

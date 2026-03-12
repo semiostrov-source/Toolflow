@@ -10,6 +10,9 @@ describe('InventoryTable', () => {
     expect(screen.getByRole('columnheader', { name: 'SKU' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Unit' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Created' })).toBeInTheDocument()
+    expect(
+      screen.getByRole('columnheader', { name: 'Actions' }),
+    ).toBeInTheDocument()
   })
 
   it('renders rows for mock items', () => {
@@ -25,7 +28,14 @@ describe('InventoryTable', () => {
     expect(screen.getByText('TAPE-004')).toBeInTheDocument()
 
     // Non-empty state should not show the empty message
-    expect(screen.queryByText('No inventory items yet.')).not.toBeInTheDocument()
+    expect(screen.queryByText('No inventory items yet')).not.toBeInTheDocument()
+  })
+
+  it('renders View and Edit actions for at least one row', () => {
+    render(<InventoryTable />)
+
+    expect(screen.getByRole('button', { name: 'View' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument()
   })
 })
 

@@ -1,12 +1,12 @@
 # Inventory UI Foundation
 
-**Status**: ✅ Initial implementation  
-**Components**: `InventoryPage`, `InventoryToolbar`, `InventoryTable`  
+**Status**: ✅ UX foundation with filtering layer  
+**Components**: `InventoryPage`, `InventoryToolbar`, `InventoryFilters`, `InventoryTable`  
 **Mock Data**: `src/features/inventory/mock/items.ts`
 
 ## Overview
 
-The inventory UI foundation establishes a lightweight, composable structure for the inventory feature. It consists of three coordinated components that work together with a centralized mock dataset for development.
+The inventory UI foundation establishes a lightweight, composable structure for the inventory feature. It consists of four coordinated components that work together with a centralized mock dataset for development.
 
 ## Mock Data: `mockItems`
 
@@ -57,16 +57,41 @@ Currently no props required. The component renders the toolbar UI independently.
 
 ---
 
+## InventoryFilters Component
+
+**Location**: `src/features/inventory/components/InventoryFilters.tsx`
+
+A pre-filter UI row positioned between the toolbar and table. It provides dedicated UI controls for filtering inventory by warehouse and unit dimensions.
+
+### Current Behavior
+
+The filters are **placeholder controls** at this stage—establishing the visual space and component structure for future filtering logic.
+
+**Features**:
+- **Warehouse Select**: Placeholder dropdown for filtering by warehouse location
+- **Unit Select**: Placeholder dropdown for filtering by unit type or dimension
+- **Responsive Layout**: Flexbox row that adapts to available space
+
+### Future Enhancements
+
+- Wire select controls to filter `InventoryTable` by warehouse and unit
+- Add additional filter dimensions (category, status, etc.)
+- Implement filter reset and preset filter groups
+
+---
+
 ## InventoryPage Layout
 
 **Location**: `src/pages/InventoryPage.tsx`
 
-The `InventoryPage` assembles the three core components into a cohesive page structure:
+The `InventoryPage` assembles the four core components into a cohesive page structure:
 
 ```
 PageHeader
   ↓
 InventoryToolbar
+  ↓
+InventoryFilters
   ↓
 InventoryTable
 ```
@@ -79,6 +104,7 @@ InventoryTable
   description="Manage warehouse stock levels"
 />
 <InventoryToolbar />
+<InventoryFilters />
 <InventoryTable />
 ```
 
@@ -88,7 +114,8 @@ InventoryTable
 |-----------|------|
 | `PageHeader` | Displays page title, description, and any global actions |
 | `InventoryToolbar` | Provides search and creation entry points |
-| `InventoryTable` | Renders the list of inventory items from `mockItems` |
+| `InventoryFilters` | Pre-filter UI row for warehouse and unit filtering |
+| `InventoryTable` | Renders the list of inventory items from `mockItems` with row actions |
 
 ---
 
@@ -111,9 +138,69 @@ This architecture enables:
 
 ---
 
+## Table Actions
+
+The `InventoryTable` now includes an **Actions column** with placeholder buttons:
+- **View**: Opens item details (not yet implemented)
+- **Edit**: Opens item editor (not yet implemented)
+
+These buttons are structural placeholders and do not perform navigation or state changes yet. They establish the UI foundation for item-level operations.
+
+---
+
+## Item Selection & Details Panel
+
+**Location**: `src/features/inventory/components/InventoryDetailsPanel.tsx`
+
+### Selection Mechanism
+
+The inventory workspace now supports **local item selection** managed at the `InventoryPage` level:
+
+- **State**: `selectedItem: Item | null` tracks the currently selected inventory item
+- **Trigger**: Clicking the **View button** on a table row selects that item
+- **Visual Feedback**: Selected rows are highlighted with the `inventory-table-row--selected` CSS class
+- **Non-persistent**: Selection is temporary and lives only in component state; it is reset when navigating away or on page reload
+
+This intentionally simple selection pattern establishes the interaction foundation without introducing routing or persistent state, allowing future layers to be added incrementally.
+
+### InventoryDetailsPanel Component
+
+A read-only details view panel that displays comprehensive item information alongside the inventory table.
+
+**Features**:
+- **Empty State**: Shows "Select an inventory item to view details" when no item is selected
+- **Item Details**: Displays Name, SKU, Unit, and Created date when an item is selected
+- **Placeholder Sections**: Includes reserved UI sections for "Stock summary" and "Recent movements" (to be implemented)
+
+### Layout: Split-View Workspace
+
+On large screens, the inventory page arranges the table and details panel side-by-side in a workspace layout:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ Inventory Table                  │ Details Panel        │
+│ ─────────────────────────────────┼──────────────────── │
+│ • Item 1 [View] [Edit]          │ Name: Item 1        │
+│ • Item 2 [View] [Edit]          │ SKU: SKU-001        │
+│ • Item 3 [View] [Edit]          │ Unit: Pcs           │
+│ ─────────────────────────────────┤ Created: 2025-01-01 │
+│                                  │                      │
+│                                  │ Stock summary        │
+│                                  │ (placeholder)        │
+│                                  │                      │
+│                                  │ Recent movements     │
+│                                  │ (placeholder)        │
+└─────────────────────────────────────────────────────────┘
+```
+
+On mobile screens, the layout stacks vertically with the table above and details panel below.
+
+---
+
 ## Next Steps
 
-1. **Search functionality** — Connect search input to filter table by name/SKU
-2. **Add Item workflow** — Implement modal/form and create action
-3. **Backend integration** — Replace `mockItems` with API endpoints
-4. **Enhanced table** — Add sorting, filtering, pagination, and row actions
+1. **Filter implementation** — Wire Warehouse and Unit selects to filter table results
+2. **Search functionality** — Connect search input to filter table by name/SKU
+3. **Row actions** — Implement View and Edit navigation handlers
+4. **Add Item workflow** — Implement modal/form and create action
+5. **Backend integration** — Replace `mockItems` with API endpoints
