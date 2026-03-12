@@ -1,3 +1,4 @@
 // Inventory feature public API boundary.
 // Export inventory-related types, components, and utilities from here as they are implemented.
-export {};
+
+export type { Item, Stock, Movement, MovementType } from './types/domain';
