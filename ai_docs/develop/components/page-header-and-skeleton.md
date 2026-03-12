@@ -108,3 +108,52 @@ All PageHeader and page-section styles are defined in `src/index.css` under the 
 - `.page-section` — white card-like container for page content
 
 Both light and dark mode variants are included. No additional CSS is needed when using the standard skeleton.
+
+---
+
+## InventoryTable Component
+
+### Purpose
+
+`InventoryTable` is a **development-time skeleton** for displaying the inventory list on the `InventoryPage`. It provides a simple table layout with essential columns (Name, SKU, Unit, Created) and demonstrates the basic structure for future inventory features.
+
+**Component Location:** `src/features/inventory/components/InventoryTable.tsx`  
+**Styles Location:** `src/index.css` (inventory-table section)
+
+### Current Implementation
+
+The component is intentionally minimal and serves as a foundation for future work:
+
+- **Mock Dataset**: Renders a small hard-coded `Item[]` array for development purposes
+- **Empty State**: Shows a friendly message when no items exist
+- **Basic Table Structure**: Displays columns without sorting, filtering, or pagination
+- **Styled for Consistency**: Uses `.inventory-table*` CSS classes aligned with the app's light/dark theme
+
+### Usage
+
+```tsx
+import { InventoryTable } from './components/InventoryTable'
+
+export function InventoryPage() {
+  return (
+    <>
+      <PageHeader title="Inventory" description="Manage warehouse stock levels" />
+      <section className="page-section">
+        <InventoryTable />
+      </section>
+    </>
+  )
+}
+```
+
+### Props
+
+Currently no props are required. The component manages its own state with the mock dataset.
+
+### Future Enhancements
+
+- Replace mock data with real backend API integration
+- Add sorting and filtering capabilities
+- Implement pagination for large datasets
+- Add bulk actions and row selection
+- Integrate with the inventory domain model and workflows

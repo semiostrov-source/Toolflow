@@ -284,6 +284,49 @@ a:hover {
   font-size: 0.9rem;
 }
 
+.inventory-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  min-width: 480px;
+}
+
+.inventory-table-header th {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  background: #f6f8fa;
+  border-bottom: 1px solid #e6edf0;
+}
+
+.inventory-table-row:nth-child(even) .inventory-table-cell {
+  background: #fdfefe;
+}
+
+.inventory-table-cell {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e6edf0;
+  white-space: nowrap;
+}
+
+.inventory-table-cell--primary {
+  font-weight: 500;
+}
+
+.inventory-table-empty {
+  padding: 0.75rem 0.75rem;
+  text-align: center;
+  color: #57606a;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #e6edf1;
@@ -333,6 +376,19 @@ a:hover {
   .page-section {
     background: #161b22;
     border-color: #30363d;
+  }
+  .inventory-table-header th {
+    background: #161b22;
+    border-bottom-color: #30363d;
+  }
+  .inventory-table-row:nth-child(even) .inventory-table-cell {
+    background: #0d1117;
+  }
+  .inventory-table-cell {
+    border-bottom-color: #30363d;
+  }
+  .inventory-table-empty {
+    color: #8b949e;
   }
   a {
     color: #58a6ff;
