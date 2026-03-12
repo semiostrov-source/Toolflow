@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
-import { Header } from '../shared/ui'
+import { AppLayout } from './AppLayout'
 import {
   DashboardPage,
   InventoryPage,
@@ -9,16 +9,13 @@ import {
 
 export function App() {
   return (
-    <div className="app">
-      <Header />
-      <div className="app-body">
-        <Routes>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/inventory" element={<InventoryPage />} />
-          <Route path="/warehouses" element={<WarehousesPage />} />
-          <Route path="/requests" element={<RequestsPage />} />
-        </Routes>
-      </div>
-    </div>
+    <Routes>
+      <Route path="/" element={<AppLayout />}>
+        <Route index element={<DashboardPage />} />
+        <Route path="inventory" element={<InventoryPage />} />
+        <Route path="warehouses" element={<WarehousesPage />} />
+        <Route path="requests" element={<RequestsPage />} />
+      </Route>
+    </Routes>
   )
 }

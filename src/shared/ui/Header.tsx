@@ -1,31 +1,25 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
-const navItems = [
-  { to: '/', label: 'Dashboard' },
-  { to: '/inventory', label: 'Inventory' },
-  { to: '/warehouses', label: 'Warehouses' },
-  { to: '/requests', label: 'Requests' },
-] as const
+interface HeaderProps {
+  onMenuClick?: () => void
+}
 
-export function Header() {
-  const location = useLocation()
-
+export function Header({ onMenuClick }: HeaderProps) {
   return (
     <header className="app-header">
+      {onMenuClick && (
+        <button
+          type="button"
+          className="app-menu-btn"
+          onClick={onMenuClick}
+          aria-label="Toggle sidebar"
+        >
+          ☰
+        </button>
+      )}
       <Link to="/" className="app-brand">
         ToolFlow
       </Link>
-      <nav className="app-nav" aria-label="Main">
-        {navItems.map(({ to, label }) => (
-          <Link
-            key={to}
-            to={to}
-            className={`app-nav-link ${location.pathname === to ? 'active' : ''}`}
-          >
-            {label}
-          </Link>
-        ))}
-      </nav>
     </header>
   )
 }
