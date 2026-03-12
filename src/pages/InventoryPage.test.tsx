@@ -63,11 +63,19 @@ describe('InventoryPage', () => {
     ).toBeInTheDocument()
 
     const createdDate = new Date('2025-12-01T10:15:00.000Z').toLocaleDateString()
-    expect(screen.getByText('Name')).toBeInTheDocument()
-    expect(screen.getByText('SKU')).toBeInTheDocument()
-    expect(screen.getByText('Unit')).toBeInTheDocument()
-    expect(screen.getByText('Created')).toBeInTheDocument()
-    expect(screen.getByText(createdDate)).toBeInTheDocument()
+    const detailsSection = screen
+      .getByText('SKU BOX-001 · pcs')
+      .closest('section') as HTMLElement | null
+
+    expect(detailsSection).not.toBeNull()
+
+    const details = within(detailsSection as HTMLElement)
+
+    expect(details.getByText('Name')).toBeInTheDocument()
+    expect(details.getByText('SKU')).toBeInTheDocument()
+    expect(details.getByText('Unit')).toBeInTheDocument()
+    expect(details.getByText('Created')).toBeInTheDocument()
+    expect(details.getByText(createdDate)).toBeInTheDocument()
 
     expect(
       screen.getByText('Stock summary (placeholder)'),
@@ -76,9 +84,16 @@ describe('InventoryPage', () => {
       screen.getByText('Recent movements (placeholder)'),
     ).toBeInTheDocument()
 
-    const selectedRow = screen.getByText('Cardboard Box').closest('tr')
-    expect(selectedRow).not.toBeNull()
-    expect(selectedRow).toHaveClass('inventory-table-row--selected')
+    const table = screen.getByRole('table')
+    const rows = within(table).getAllByRole('row')
+    const selectedRow = rows.find((row) =>
+      row.textContent?.includes('Cardboard Box'),
+    )
+
+    expect(selectedRow).toBeTruthy()
+    expect(selectedRow as HTMLElement).toHaveClass(
+      'inventory-table-row--selected',
+    )
   })
 })
 
