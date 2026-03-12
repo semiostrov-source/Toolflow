@@ -1,3 +1,6 @@
+import { useState } from 'react'
+import { InventoryRowOverflowMenu } from './InventoryRowOverflowMenu'
+
 interface InventoryRowActionsProps {
   onView?: () => void
   onEdit?: () => void
@@ -9,6 +12,17 @@ export function InventoryRowActions({
   onEdit,
   onMore,
 }: InventoryRowActionsProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const handleMoreClick = () => {
+    setIsMenuOpen((previous) => !previous)
+    onMore?.()
+  }
+
+  const handleMenuClose = () => {
+    setIsMenuOpen(false)
+  }
+
   return (
     <div className="inventory-table-actions">
       <button
@@ -28,10 +42,16 @@ export function InventoryRowActions({
       <button
         type="button"
         className="inventory-table-action-button"
-        onClick={onMore}
+        aria-haspopup="menu"
+        aria-expanded={isMenuOpen}
+        onClick={handleMoreClick}
       >
         More
       </button>
+      <InventoryRowOverflowMenu
+        isOpen={isMenuOpen}
+        onClose={handleMenuClose}
+      />
     </div>
   )
 }

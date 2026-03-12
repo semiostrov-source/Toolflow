@@ -198,6 +198,7 @@ This architecture enables:
 The `InventoryTable` now includes an **Actions column** with placeholder buttons:
 - **View**: Opens item details (not yet implemented)
 - **Edit**: Opens item editor (not yet implemented)
+- **More**: Opens a non-destructive overflow menu with placeholder entries (`Open details`, `Edit item`, `View history`)
 
 These buttons are structural placeholders and do not perform navigation or state changes yet. They establish the UI foundation for item-level operations.
 
