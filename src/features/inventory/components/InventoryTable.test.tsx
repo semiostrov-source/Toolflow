@@ -34,8 +34,11 @@ describe('InventoryTable', () => {
   it('renders View and Edit actions for at least one row', () => {
     render(<InventoryTable />)
 
-    expect(screen.getByRole('button', { name: 'View' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument()
+    const viewButtons = screen.getAllByRole('button', { name: 'View' })
+    const editButtons = screen.getAllByRole('button', { name: 'Edit' })
+
+    expect(viewButtons.length).toBeGreaterThan(0)
+    expect(editButtons.length).toBeGreaterThan(0)
   })
 })
 
