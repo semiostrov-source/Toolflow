@@ -76,18 +76,38 @@ A pre-filter UI row positioned between the toolbar and table. It provides dedica
 
 ### Current Behavior
 
-The filters are **placeholder controls** at this stage—establishing the visual space and component structure for future filtering logic.
+The filters row provides **local, UI-only controls** for refining the inventory list:
 
 **Features**:
-- **Warehouse Select**: Placeholder dropdown for filtering by warehouse location
-- **Unit Select**: Placeholder dropdown for filtering by unit type or dimension
+- **Warehouse Select**: Dropdown for selecting a warehouse scope (currently wired to page-level state, operating on mock data)
+- **Unit Select**: Dropdown for narrowing by unit type or dimension (also local-only)
+- **Sort Controls**: Minimal sort UI with:
+  - **Sort Field**: `Name` or `Created`
+  - **Sort Direction**: `Ascending` or `Descending`
 - **Responsive Layout**: Flexbox row that adapts to available space
+
+Filtering and sorting are applied **on top of the same mock `Item[]` dataset** and remain entirely client-side.
+
+### Local Sorting Foundation
+
+Sorting is applied after search and filter logic:
+
+- **Fields**:
+  - `Name` — alphabetical sort on the item name
+  - `Created` — chronological sort on the `createdAt` timestamp
+- **Directions**:
+  - `Ascending`
+  - `Descending`
+- **Scope**:
+  - Sorting is performed on the **already filtered** set of items (search + warehouse + unit)
+  - Selection is preserved when the selected item remains in the sorted results
+  - Behavior is local and mock-data–only; no backend or URL sync is involved yet
 
 ### Future Enhancements
 
-- Wire select controls to filter `InventoryTable` by warehouse and unit
 - Add additional filter dimensions (category, status, etc.)
 - Implement filter reset and preset filter groups
+- Consider moving sorting and filtering to the backend once APIs are available
 
 ---
 

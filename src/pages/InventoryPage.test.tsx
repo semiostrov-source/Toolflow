@@ -213,5 +213,120 @@ describe('InventoryPage', () => {
     )
     expect(selectedRow).toBeNull()
   })
+
+  it('sorts items by Name ascending and descending', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const sortFieldSelect = screen.getByLabelText('Sort by')
+    const sortDirectionSelect = screen.getByLabelText('Direction')
+
+    // Name ascending
+    await user.selectOptions(sortFieldSelect, 'name')
+    await user.selectOptions(sortDirectionSelect, 'asc')
+
+    const tableAsc = screen.getByRole('table')
+    const rowsAsc = within(tableAsc).getAllByRole('row').slice(1)
+    const namesAsc = rowsAsc.map((row) =>
+      row.querySelector('td')?.textContent?.trim(),
+    )
+
+    expect(namesAsc).toEqual([
+      'Cardboard Box',
+      'Packing Tape',
+      'Shipping Label',
+    ])
+
+    // Name descending
+    await user.selectOptions(sortFieldSelect, 'name')
+    await user.selectOptions(sortDirectionSelect, 'desc')
+
+    const tableDesc = screen.getByRole('table')
+    const rowsDesc = within(tableDesc).getAllByRole('row').slice(1)
+    const namesDesc = rowsDesc.map((row) =>
+      row.querySelector('td')?.textContent?.trim(),
+    )
+
+    expect(namesDesc).toEqual([
+      'Shipping Label',
+      'Packing Tape',
+      'Cardboard Box',
+    ])
+  })
+
+  it('sorts items by Created ascending and descending', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const sortFieldSelect = screen.getByLabelText('Sort by')
+    const sortDirectionSelect = screen.getByLabelText('Direction')
+
+    // Created ascending
+    await user.selectOptions(sortFieldSelect, 'created')
+    await user.selectOptions(sortDirectionSelect, 'asc')
+
+    const tableAsc = screen.getByRole('table')
+    const rowsAsc = within(tableAsc).getAllByRole('row').slice(1)
+    const namesAsc = rowsAsc.map((row) =>
+      row.querySelector('td')?.textContent?.trim(),
+    )
+
+    expect(namesAsc).toEqual([
+      'Cardboard Box',
+      'Shipping Label',
+      'Packing Tape',
+    ])
+
+    // Created descending
+    await user.selectOptions(sortFieldSelect, 'created')
+    await user.selectOptions(sortDirectionSelect, 'desc')
+
+    const tableDesc = screen.getByRole('table')
+    const rowsDesc = within(tableDesc).getAllByRole('row').slice(1)
+    const namesDesc = rowsDesc.map((row) =>
+      row.querySelector('td')?.textContent?.trim(),
+    )
+
+    expect(namesDesc).toEqual([
+      'Packing Tape',
+      'Shipping Label',
+      'Cardboard Box',
+    ])
+  })
+
+  it('keeps selected item selected after sorting when still present', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    // Select Cardboard Box
+    const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
+    expect(cardBoardRow).not.toBeNull()
+
+    const viewButton = within(cardBoardRow as HTMLTableRowElement).getByRole(
+      'button',
+      { name: 'View' },
+    )
+
+    await user.click(viewButton)
+
+    const sortFieldSelect = screen.getByLabelText('Sort by')
+    const sortDirectionSelect = screen.getByLabelText('Direction')
+
+    // Change sort order
+    await user.selectOptions(sortFieldSelect, 'name')
+    await user.selectOptions(sortDirectionSelect, 'desc')
+
+    // Cardboard Box should still be selected even if its row moved
+    const table = screen.getByRole('table')
+    const rows = within(table).getAllByRole('row').slice(1)
+    const selectedRow = rows.find((row) =>
+      row.textContent?.includes('Cardboard Box'),
+    )
+
+    expect(selectedRow).toBeTruthy()
+    expect(selectedRow as HTMLElement).toHaveClass(
+      'inventory-table-row--selected',
+    )
+  })
 })
 

@@ -10,6 +10,8 @@ import { mockItems } from '../features/inventory/mock/items'
 export function InventoryPage() {
   const [selectedItem, setSelectedItem] = useState<Item | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortField, setSortField] = useState<'name' | 'created'>('name')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
 
   const normalizedQuery = searchQuery.trim().toLowerCase()
   const filteredItems = normalizedQuery
@@ -23,6 +25,20 @@ export function InventoryPage() {
         )
       })
     : mockItems
+
+  const sortedItems = [...filteredItems].sort((a, b) => {
+    let compareValue = 0
+
+    if (sortField === 'name') {
+      compareValue = a.name.localeCompare(b.name)
+    } else {
+      const aTime = new Date(a.createdAt).getTime()
+      const bTime = new Date(b.createdAt).getTime()
+      compareValue = aTime - bTime
+    }
+
+    return sortDirection === 'asc' ? compareValue : -compareValue
+  })
 
   useEffect(() => {
     if (!selectedItem) return
@@ -46,12 +62,15 @@ export function InventoryPage() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />
-      <InventoryFilters />
+      <InventoryFilters
+        onSortFieldChange={setSortField}
+        onSortDirectionChange={setSortDirection}
+      />
       <div className="inventory-workspace">
         <div className="inventory-workspace-main">
           <div className="inventory-workspace-table">
             <InventoryTable
-              items={filteredItems}
+              items={sortedItems}
               selectedItemId={selectedItem?.id}
               onSelectItem={setSelectedItem}
             />
