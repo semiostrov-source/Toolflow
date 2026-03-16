@@ -149,5 +149,28 @@ describe('InventoryRowActions', () => {
     ).not.toBeInTheDocument()
     expect(moreButton).toHaveAttribute('aria-expanded', 'false')
   })
+
+  it('moves focus into the overflow menu and returns it to More on Escape', async () => {
+    const user = userEvent.setup()
+
+    render(<InventoryRowActions />)
+
+    const moreButton = screen.getByRole('button', { name: 'More' })
+
+    moreButton.focus()
+    expect(moreButton).toHaveFocus()
+
+    await user.click(moreButton)
+
+    const firstMenuItem = screen.getByRole('menuitem', { name: 'Open details' })
+    expect(firstMenuItem).toHaveFocus()
+
+    await user.keyboard('{Escape}')
+
+    expect(
+      screen.queryByRole('menu', { name: 'Inventory row actions' }),
+    ).not.toBeInTheDocument()
+    expect(moreButton).toHaveFocus()
+  })
 })
 

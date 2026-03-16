@@ -1,11 +1,13 @@
 interface InventoryRowOverflowMenuProps {
   isOpen: boolean
   onClose?: () => void
+  firstItemRef?: React.Ref<HTMLButtonElement>
 }
 
 export function InventoryRowOverflowMenu({
   isOpen,
   onClose,
+  firstItemRef,
 }: InventoryRowOverflowMenuProps) {
   if (!isOpen) {
     return null
@@ -23,6 +25,7 @@ export function InventoryRowOverflowMenu({
         aria-label="Inventory row actions"
       >
         <button
+          ref={firstItemRef}
           type="button"
           className="inventory-row-overflow-menu-item"
           role="menuitem"

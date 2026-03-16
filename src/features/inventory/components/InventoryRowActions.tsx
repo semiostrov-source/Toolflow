@@ -15,6 +15,15 @@ export function InventoryRowActions({
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const actionsRef = useRef<HTMLDivElement | null>(null)
+  const moreButtonRef = useRef<HTMLButtonElement | null>(null)
+  const firstMenuItemRef = useRef<HTMLButtonElement | null>(null)
+
+  const handleMenuClose = () => {
+    setIsMenuOpen(false)
+    if (moreButtonRef.current) {
+      moreButtonRef.current.focus()
+    }
+  }
 
   useEffect(() => {
     if (!isMenuOpen) {
@@ -26,13 +35,13 @@ export function InventoryRowActions({
         actionsRef.current &&
         !actionsRef.current.contains(event.target as Node)
       ) {
-        setIsMenuOpen(false)
+        handleMenuClose()
       }
     }
 
     const handleDocumentKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setIsMenuOpen(false)
+        handleMenuClose()
       }
     }
 
@@ -45,13 +54,16 @@ export function InventoryRowActions({
     }
   }, [isMenuOpen])
 
+  useEffect(() => {
+    if (!isMenuOpen) return
+    if (firstMenuItemRef.current) {
+      firstMenuItemRef.current.focus()
+    }
+  }, [isMenuOpen])
+
   const handleMoreClick = () => {
     setIsMenuOpen((previous) => !previous)
     onMore?.()
-  }
-
-  const handleMenuClose = () => {
-    setIsMenuOpen(false)
   }
 
   return (
@@ -71,6 +83,7 @@ export function InventoryRowActions({
         Edit
       </button>
       <button
+        ref={moreButtonRef}
         type="button"
         className="inventory-table-action-button"
         aria-haspopup="menu"
@@ -82,6 +95,7 @@ export function InventoryRowActions({
       <InventoryRowOverflowMenu
         isOpen={isMenuOpen}
         onClose={handleMenuClose}
+        firstItemRef={firstMenuItemRef}
       />
     </div>
   )
