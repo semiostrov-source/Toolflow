@@ -352,6 +352,100 @@ describe('InventoryPage', () => {
     )
   })
 
+  it('selects all visible rows via the header checkbox', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const headerCheckbox = screen.getByRole('checkbox', {
+      name: 'Select all visible items',
+    })
+
+    // Initially, no rows are selected and the header checkbox is unchecked
+    expect(headerCheckbox).not.toBeChecked()
+    expect(headerCheckbox).toHaveProperty('indeterminate', false)
+
+    mockItems.forEach((item) => {
+      const rowCheckbox = screen.getByRole('checkbox', {
+        name: `Select ${item.name}`,
+      })
+
+      expect(rowCheckbox).not.toBeChecked()
+    })
+
+    await user.click(headerCheckbox)
+
+    mockItems.forEach((item) => {
+      const rowCheckbox = screen.getByRole('checkbox', {
+        name: `Select ${item.name}`,
+      })
+
+      expect(rowCheckbox).toBeChecked()
+    })
+
+    expect(
+      screen.getByText(`${mockItems.length} items selected`),
+    ).toBeInTheDocument()
+  })
+
+  it('clears selection for all visible rows when the header checkbox is toggled off', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const headerCheckbox = screen.getByRole('checkbox', {
+      name: 'Select all visible items',
+    })
+
+    await user.click(headerCheckbox)
+
+    mockItems.forEach((item) => {
+      const rowCheckbox = screen.getByRole('checkbox', {
+        name: `Select ${item.name}`,
+      })
+
+      expect(rowCheckbox).toBeChecked()
+    })
+
+    expect(
+      screen.getByText(`${mockItems.length} items selected`),
+    ).toBeInTheDocument()
+
+    await user.click(headerCheckbox)
+
+    mockItems.forEach((item) => {
+      const rowCheckbox = screen.getByRole('checkbox', {
+        name: `Select ${item.name}`,
+      })
+
+      expect(rowCheckbox).not.toBeChecked()
+    })
+
+    expect(
+      screen.queryByText(/items selected$/),
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows the indeterminate state on the header checkbox when some but not all visible rows are selected', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const headerCheckbox = screen.getByRole('checkbox', {
+      name: 'Select all visible items',
+    })
+
+    const firstItem = mockItems[0]
+    const firstItemCheckbox = screen.getByRole('checkbox', {
+      name: `Select ${firstItem.name}`,
+    })
+
+    await user.click(firstItemCheckbox)
+
+    expect(firstItemCheckbox).toBeChecked()
+
+    // Header checkbox should be visually indeterminate (mixed) but not fully checked
+    expect(headerCheckbox).not.toBeChecked()
+    expect(headerCheckbox).toHaveProperty('indeterminate', true)
+  })
+
   it('allows selecting multiple rows via checkboxes and shows the correct bulk selection count', async () => {
     renderInventoryPage()
     const user = userEvent.setup()

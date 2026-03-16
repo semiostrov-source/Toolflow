@@ -41,12 +41,49 @@ export function InventoryPage() {
     return sortDirection === 'asc' ? compareValue : -compareValue
   })
 
+  const visibleIds = sortedItems.map((item) => item.id)
+
+  const selectedVisibleCount = visibleIds.filter((id) =>
+    bulkSelectedItemIds.includes(id),
+  ).length
+
+  const allVisibleSelected =
+    visibleIds.length > 0 && selectedVisibleCount === visibleIds.length
+
+  const someVisibleSelected =
+    selectedVisibleCount > 0 && selectedVisibleCount < visibleIds.length
+
   const handleToggleBulkSelect = (itemId: string) => {
     setBulkSelectedItemIds((previous) =>
       previous.includes(itemId)
         ? previous.filter((id) => id !== itemId)
         : [...previous, itemId],
     )
+  }
+
+  const handleToggleSelectAllVisible = () => {
+    setBulkSelectedItemIds((previous) => {
+      const visibleIdSet = new Set(visibleIds)
+      const previousSelectedVisibleCount = previous.filter((id) =>
+        visibleIdSet.has(id),
+      ).length
+
+      if (visibleIds.length === 0) {
+        return previous
+      }
+
+      if (previousSelectedVisibleCount === 0) {
+        const merged = new Set([...previous, ...visibleIds])
+        return Array.from(merged)
+      }
+
+      if (previousSelectedVisibleCount === visibleIds.length) {
+        return previous.filter((id) => !visibleIdSet.has(id))
+      }
+
+      const merged = new Set([...previous, ...visibleIds])
+      return Array.from(merged)
+    })
   }
 
   const handleClearBulkSelection = () => {
@@ -90,6 +127,9 @@ export function InventoryPage() {
               onSelectItem={setSelectedItem}
               bulkSelectedItemIds={bulkSelectedItemIds}
               onToggleBulkSelect={handleToggleBulkSelect}
+              allVisibleSelected={allVisibleSelected}
+              someVisibleSelected={someVisibleSelected}
+              onToggleSelectAllVisible={handleToggleSelectAllVisible}
             />
           </div>
           <div className="inventory-workspace-details">

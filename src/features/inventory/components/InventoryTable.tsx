@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import type { Item } from '..'
 import { StatusBadge } from './StatusBadge'
 import { mockItems } from '../mock/items'
@@ -9,6 +10,9 @@ interface InventoryTableProps {
   onSelectItem?: (item: Item) => void
   bulkSelectedItemIds?: string[]
   onToggleBulkSelect?: (itemId: string) => void
+  allVisibleSelected?: boolean
+  someVisibleSelected?: boolean
+  onToggleSelectAllVisible?: () => void
 }
 
 export function InventoryTable({
@@ -17,9 +21,21 @@ export function InventoryTable({
   onSelectItem,
   bulkSelectedItemIds,
   onToggleBulkSelect,
+  allVisibleSelected,
+  someVisibleSelected,
+  onToggleSelectAllVisible,
 }: InventoryTableProps) {
   const itemsToRender = items ?? mockItems
   const hasItems = itemsToRender.length > 0
+
+  const headerCheckboxRef = useRef<HTMLInputElement | null>(null)
+
+  useEffect(() => {
+    if (!headerCheckboxRef.current) return
+
+    headerCheckboxRef.current.indeterminate =
+      !!someVisibleSelected && !allVisibleSelected && hasItems
+  }, [someVisibleSelected, allVisibleSelected, hasItems])
 
   return (
     <section className="page-section">
@@ -31,7 +47,15 @@ export function InventoryTable({
                 scope="col"
                 className="inventory-table-cell inventory-table-cell--checkbox"
               >
-                <span className="sr-only">Select item</span>
+                <input
+                  type="checkbox"
+                  ref={headerCheckboxRef}
+                  className="inventory-table-checkbox"
+                  checked={!!allVisibleSelected && hasItems}
+                  disabled={!hasItems}
+                  onChange={() => onToggleSelectAllVisible?.()}
+                  aria-label="Select all visible items"
+                />
               </th>
               <th scope="col">Name</th>
               <th scope="col">SKU</th>
@@ -82,7 +106,7 @@ export function InventoryTable({
               })
             ) : (
               <tr className="inventory-table-empty-row">
-                <td colSpan={5} className="inventory-table-empty">
+                <td colSpan={6} className="inventory-table-empty">
                   No inventory items yet
                 </td>
               </tr>
