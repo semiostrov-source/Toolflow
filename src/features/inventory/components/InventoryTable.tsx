@@ -109,6 +109,20 @@ export function InventoryTable({
                     className={`inventory-table-row${
                       isSelected ? ' inventory-table-row--selected' : ''
                     }`}
+                    tabIndex={0}
+                    onKeyDown={(event) => {
+                      if (event.currentTarget !== event.target) return
+
+                      if (event.key === 'Enter') {
+                        onToggleBulkSelect?.(item.id)
+                        return
+                      }
+
+                      if (event.key === ' ' || event.key === 'Spacebar') {
+                        event.preventDefault()
+                        onToggleBulkSelect?.(item.id)
+                      }
+                    }}
                   >
                     <td className="inventory-table-cell inventory-table-cell--checkbox">
                       <input
