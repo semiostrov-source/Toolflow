@@ -24,14 +24,31 @@ describe('InventoryBulkActionsBar', () => {
     )
 
     expect(screen.getByText('3 items selected')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Move' })).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: 'Change status' }),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: 'Write off' }),
-    ).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument()
+    const moveButton = screen.getByRole('button', { name: 'Move' })
+    const changeStatusButton = screen.getByRole('button', {
+      name: 'Change status',
+    })
+    const writeOffButton = screen.getByRole('button', { name: 'Write off' })
+    const clearButton = screen.getByRole('button', { name: 'Clear' })
+
+    expect(moveButton).toBeInTheDocument()
+    expect(moveButton).toBeDisabled()
+    expect(moveButton).toHaveAttribute('aria-disabled', 'true')
+    expect(moveButton).toHaveClass('inventory-action-disabled')
+
+    expect(changeStatusButton).toBeInTheDocument()
+    expect(changeStatusButton).toBeDisabled()
+    expect(changeStatusButton).toHaveAttribute('aria-disabled', 'true')
+    expect(changeStatusButton).toHaveClass('inventory-action-disabled')
+
+    expect(writeOffButton).toBeInTheDocument()
+    expect(writeOffButton).toBeDisabled()
+    expect(writeOffButton).toHaveAttribute('aria-disabled', 'true')
+    expect(writeOffButton).toHaveClass('inventory-action-disabled')
+
+    expect(clearButton).toBeInTheDocument()
+    expect(clearButton).not.toBeDisabled()
+    expect(clearButton).not.toHaveAttribute('aria-disabled', 'true')
   })
 
   it('calls onClearSelection when Clear is clicked', async () => {

@@ -470,6 +470,11 @@ a:hover {
   background-color: #f0f4f8;
 }
 
+.inventory-action-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .inventory-table-row--selected .inventory-table-cell {
   background: #e6f2ff;
   border-bottom-color: #9ec6ff;

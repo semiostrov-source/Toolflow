@@ -18,19 +18,25 @@ export function InventoryBulkActionsBar({
         <div className="inventory-bulk-actions-buttons">
           <button
             type="button"
-            className="inventory-table-action-button"
+            className="inventory-table-action-button inventory-action-disabled"
+            disabled
+            aria-disabled="true"
           >
             Move
           </button>
           <button
             type="button"
-            className="inventory-table-action-button"
+            className="inventory-table-action-button inventory-action-disabled"
+            disabled
+            aria-disabled="true"
           >
             Change status
           </button>
           <button
             type="button"
-            className="inventory-table-action-button"
+            className="inventory-table-action-button inventory-action-disabled"
+            disabled
+            aria-disabled="true"
           >
             Write off
           </button>
