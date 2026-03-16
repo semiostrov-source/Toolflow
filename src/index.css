@@ -480,6 +480,12 @@ a:hover {
   border-bottom-color: #9ec6ff;
 }
 
+.inventory-table-row[tabindex]:focus-visible .inventory-table-cell {
+  outline: 2px solid #0969da;
+  outline-offset: -2px;
+  background-color: #f0f4f8;
+}
+
 .inventory-workspace {
   margin-top: 0.5rem;
 }
@@ -691,6 +697,12 @@ a:hover {
 }
 
 @media (prefers-color-scheme: dark) {
+  .inventory-table-row[tabindex]:focus-visible .inventory-table-cell {
+    outline: 2px solid #58a6ff;
+    outline-offset: -2px;
+    background-color: #161b22;
+  }
+
   :root {
     color: #e6edf1;
     background-color: #0d1117;
