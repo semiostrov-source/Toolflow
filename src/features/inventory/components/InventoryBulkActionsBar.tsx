@@ -1,11 +1,19 @@
+import type { ItemStatus } from '..'
+
 interface InventoryBulkActionsBarProps {
   selectedCount: number
   onClearSelection: () => void
+  selectedStatus: ItemStatus | ''
+  onStatusChange: (status: ItemStatus | '') => void
+  onApplyStatusChange: () => void
 }
 
 export function InventoryBulkActionsBar({
   selectedCount,
   onClearSelection,
+  selectedStatus,
+  onStatusChange,
+  onApplyStatusChange,
 }: InventoryBulkActionsBarProps) {
   const itemLabel = selectedCount === 1 ? 'item' : 'items'
 
@@ -24,14 +32,32 @@ export function InventoryBulkActionsBar({
           >
             Move
           </button>
-          <button
-            type="button"
-            className="inventory-table-action-button inventory-action-disabled"
-            disabled
-            aria-disabled="true"
-          >
-            Change status
-          </button>
+          <div className="inventory-bulk-actions-change-status">
+            <span className="inventory-bulk-actions-text">Change status:</span>
+            <select
+              className="inventory-bulk-status-select"
+              value={selectedStatus || ''}
+              onChange={(event) =>
+                onStatusChange(
+                  (event.target.value as ItemStatus | '') || '',
+                )
+              }
+            >
+              <option value="">Select status</option>
+              <option value="available">available</option>
+              <option value="in_use">in_use</option>
+              <option value="maintenance">maintenance</option>
+              <option value="written_off">written_off</option>
+            </select>
+            <button
+              type="button"
+              className="inventory-table-action-button"
+              disabled={!selectedStatus}
+              onClick={onApplyStatusChange}
+            >
+              Apply
+            </button>
+          </div>
           <button
             type="button"
             className="inventory-table-action-button inventory-action-disabled"

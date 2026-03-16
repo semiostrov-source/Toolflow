@@ -538,5 +538,148 @@ describe('InventoryPage', () => {
     expect(cardboardCheckbox).not.toBeChecked()
     expect(palletJackCheckbox).not.toBeChecked()
   })
+
+  it('allows changing status in bulk and updates table badges and selection state', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const cardboardCheckbox = screen.getByRole('checkbox', {
+      name: 'Select Cardboard Box',
+    })
+    const palletJackCheckbox = screen.getByRole('checkbox', {
+      name: 'Select Electric Pallet Jack',
+    })
+
+    await user.click(cardboardCheckbox)
+    await user.click(palletJackCheckbox)
+
+    // Bulk actions bar appears with Change status controls
+    const bulkBar = document.querySelector(
+      '.inventory-bulk-actions-bar',
+    ) as HTMLElement | null
+    expect(bulkBar).not.toBeNull()
+
+    const changeStatusLabel = screen.getByText('Change status:')
+    expect(changeStatusLabel).toBeInTheDocument()
+
+    const changeStatusContainer = changeStatusLabel.closest(
+      '.inventory-bulk-actions-change-status',
+    ) as HTMLElement | null
+    expect(changeStatusContainer).not.toBeNull()
+
+    const statusSelect = changeStatusContainer?.querySelector(
+      'select.inventory-bulk-status-select',
+    ) as HTMLSelectElement | null
+    expect(statusSelect).not.toBeNull()
+
+    const applyButton = screen.getByRole('button', { name: 'Apply' })
+    expect(applyButton).toBeInTheDocument()
+    expect(applyButton).toBeDisabled()
+
+    // Choose a new status and apply
+    await user.selectOptions(statusSelect as HTMLSelectElement, 'maintenance')
+
+    expect(applyButton).not.toBeDisabled()
+
+    await user.click(applyButton)
+
+    // Status badges in the table rows are updated
+    const cardboardRow = screen.getByText('Cardboard Box').closest('tr')
+    const palletJackRow = screen.getByText(
+      'Electric Pallet Jack',
+    ).closest('tr')
+
+    expect(cardboardRow).not.toBeNull()
+    expect(palletJackRow).not.toBeNull()
+
+    expect(
+      within(cardboardRow as HTMLTableRowElement).getByTitle('Maintenance'),
+    ).toBeInTheDocument()
+    expect(
+      within(palletJackRow as HTMLTableRowElement).getByTitle('Maintenance'),
+    ).toBeInTheDocument()
+
+    // Bulk selection is cleared
+    const headerCheckbox = screen.getByRole('checkbox', {
+      name: 'Select all visible items',
+    })
+    expect(headerCheckbox).not.toBeChecked()
+
+    expect(cardboardCheckbox).not.toBeChecked()
+    expect(palletJackCheckbox).not.toBeChecked()
+
+    const toolbarBulkSelection = document.querySelector(
+      '.inventory-toolbar-bulk-selection',
+    ) as HTMLElement | null
+    expect(
+      toolbarBulkSelection &&
+        within(toolbarBulkSelection).queryByText(/items selected$/),
+    ).toBeNull()
+
+    const bulkBarAfterApply = document.querySelector(
+      '.inventory-bulk-actions-bar',
+    ) as HTMLElement | null
+    expect(bulkBarAfterApply).toBeNull()
+  })
+
+  it('updates the details panel status when the selected item is changed via bulk status change', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    // Show details for Cardboard Box
+    const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
+    expect(cardBoardRow).not.toBeNull()
+
+    const viewButton = within(cardBoardRow as HTMLTableRowElement).getByRole(
+      'button',
+      { name: 'View' },
+    )
+
+    await user.click(viewButton)
+
+    const detailsHeader = screen
+      .getByRole('heading', { name: /Cardboard Box/ })
+      .closest('header') as HTMLElement | null
+    expect(detailsHeader).not.toBeNull()
+
+    // Sanity check: details panel shows current status
+    expect(
+      within(detailsHeader as HTMLElement).getByTitle('Available'),
+    ).toBeInTheDocument()
+
+    // Add the same item to bulk selection and change status
+    const cardboardCheckbox = screen.getByRole('checkbox', {
+      name: 'Select Cardboard Box',
+    })
+
+    await user.click(cardboardCheckbox)
+
+    const changeStatusLabel = screen.getByText('Change status:')
+    const changeStatusContainer = changeStatusLabel.closest(
+      '.inventory-bulk-actions-change-status',
+    ) as HTMLElement | null
+    const statusSelect = changeStatusContainer?.querySelector(
+      'select.inventory-bulk-status-select',
+    ) as HTMLSelectElement | null
+    expect(statusSelect).not.toBeNull()
+
+    const applyButton = screen.getByRole('button', { name: 'Apply' })
+    expect(applyButton).toBeDisabled()
+
+    await user.selectOptions(statusSelect as HTMLSelectElement, 'maintenance')
+    expect(applyButton).not.toBeDisabled()
+
+    await user.click(applyButton)
+
+    // Details panel reflects the updated status
+    const updatedDetailsHeader = screen
+      .getByRole('heading', { name: /Cardboard Box/ })
+      .closest('header') as HTMLElement | null
+    expect(updatedDetailsHeader).not.toBeNull()
+
+    expect(
+      within(updatedDetailsHeader as HTMLElement).getByTitle('Maintenance'),
+    ).toBeInTheDocument()
+  })
 })
 

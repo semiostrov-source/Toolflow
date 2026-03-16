@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { Item } from '../features/inventory'
+import type { Item, ItemStatus } from '../features/inventory'
 import { PageHeader } from '../shared/ui'
 import { InventoryTable } from '../features/inventory/components/InventoryTable'
 import { InventoryToolbar } from '../features/inventory/components/InventoryToolbar'
@@ -9,15 +9,17 @@ import { InventoryBulkActionsBar } from '../features/inventory/components/Invent
 import { mockItems } from '../features/inventory/mock/items'
 
 export function InventoryPage() {
+  const [items, setItems] = useState<Item[]>(mockItems)
   const [selectedItem, setSelectedItem] = useState<Item | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [sortField, setSortField] = useState<'name' | 'created'>('name')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [bulkSelectedItemIds, setBulkSelectedItemIds] = useState<string[]>([])
+  const [bulkStatus, setBulkStatus] = useState<ItemStatus | ''>('')
 
   const normalizedQuery = searchQuery.trim().toLowerCase()
   const filteredItems = normalizedQuery
-    ? mockItems.filter((item) => {
+    ? items.filter((item) => {
         const name = item.name.toLowerCase()
         const sku = item.sku.toLowerCase()
 
@@ -26,7 +28,7 @@ export function InventoryPage() {
           sku.includes(normalizedQuery)
         )
       })
-    : mockItems
+    : items
 
   const sortedItems = [...filteredItems].sort((a, b) => {
     let compareValue = 0
@@ -91,6 +93,34 @@ export function InventoryPage() {
     setBulkSelectedItemIds([])
   }
 
+  const handleBulkStatusChange = (status: ItemStatus | '') => {
+    setBulkStatus(status)
+  }
+
+  const handleApplyBulkStatusChange = () => {
+    if (!bulkStatus) return
+
+    setItems((previousItems) =>
+      previousItems.map((item) =>
+        bulkSelectedItemIds.includes(item.id)
+          ? { ...item, status: bulkStatus }
+          : item,
+      ),
+    )
+
+    setSelectedItem((previousSelected) => {
+      if (!previousSelected) return previousSelected
+      if (!bulkSelectedItemIds.includes(previousSelected.id)) {
+        return previousSelected
+      }
+
+      return { ...previousSelected, status: bulkStatus }
+    })
+
+    setBulkSelectedItemIds([])
+    setBulkStatus('')
+  }
+
   useEffect(() => {
     if (!selectedItem) return
 
@@ -123,6 +153,9 @@ export function InventoryPage() {
         <InventoryBulkActionsBar
           selectedCount={bulkSelectedItemIds.length}
           onClearSelection={handleClearBulkSelection}
+          selectedStatus={bulkStatus}
+          onStatusChange={handleBulkStatusChange}
+          onApplyStatusChange={handleApplyBulkStatusChange}
         />
       )}
       <div className="inventory-workspace">

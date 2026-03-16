@@ -9,6 +9,9 @@ describe('InventoryBulkActionsBar', () => {
       <InventoryBulkActionsBar
         selectedCount={0}
         onClearSelection={() => {}}
+        selectedStatus=""
+        onStatusChange={() => {}}
+        onApplyStatusChange={() => {}}
       />,
     )
 
@@ -20,14 +23,15 @@ describe('InventoryBulkActionsBar', () => {
       <InventoryBulkActionsBar
         selectedCount={3}
         onClearSelection={() => {}}
+        selectedStatus=""
+        onStatusChange={() => {}}
+        onApplyStatusChange={() => {}}
       />,
     )
 
     expect(screen.getByText('3 items selected')).toBeInTheDocument()
+
     const moveButton = screen.getByRole('button', { name: 'Move' })
-    const changeStatusButton = screen.getByRole('button', {
-      name: 'Change status',
-    })
     const writeOffButton = screen.getByRole('button', { name: 'Write off' })
     const clearButton = screen.getByRole('button', { name: 'Clear' })
 
@@ -35,11 +39,6 @@ describe('InventoryBulkActionsBar', () => {
     expect(moveButton).toBeDisabled()
     expect(moveButton).toHaveAttribute('aria-disabled', 'true')
     expect(moveButton).toHaveClass('inventory-action-disabled')
-
-    expect(changeStatusButton).toBeInTheDocument()
-    expect(changeStatusButton).toBeDisabled()
-    expect(changeStatusButton).toHaveAttribute('aria-disabled', 'true')
-    expect(changeStatusButton).toHaveClass('inventory-action-disabled')
 
     expect(writeOffButton).toBeInTheDocument()
     expect(writeOffButton).toBeDisabled()
@@ -51,6 +50,36 @@ describe('InventoryBulkActionsBar', () => {
     expect(clearButton).not.toHaveAttribute('aria-disabled', 'true')
   })
 
+  it('renders Change status controls and keeps Apply disabled when no status is selected', () => {
+    render(
+      <InventoryBulkActionsBar
+        selectedCount={2}
+        onClearSelection={() => {}}
+        selectedStatus=""
+        onStatusChange={() => {}}
+        onApplyStatusChange={() => {}}
+      />,
+    )
+
+    const changeStatusLabel = screen.getByText('Change status:')
+    expect(changeStatusLabel).toBeInTheDocument()
+
+    const changeStatusContainer = changeStatusLabel.closest(
+      '.inventory-bulk-actions-change-status',
+    ) as HTMLElement | null
+    expect(changeStatusContainer).not.toBeNull()
+
+    const select = changeStatusContainer?.querySelector(
+      'select.inventory-bulk-status-select',
+    ) as HTMLSelectElement | null
+    expect(select).not.toBeNull()
+    expect(select?.value).toBe('')
+
+    const applyButton = screen.getByRole('button', { name: 'Apply' })
+    expect(applyButton).toBeInTheDocument()
+    expect(applyButton).toBeDisabled()
+  })
+
   it('calls onClearSelection when Clear is clicked', async () => {
     const user = userEvent.setup()
     const onClearSelection = vi.fn()
@@ -59,6 +88,9 @@ describe('InventoryBulkActionsBar', () => {
       <InventoryBulkActionsBar
         selectedCount={2}
         onClearSelection={onClearSelection}
+        selectedStatus="available"
+        onStatusChange={() => {}}
+        onApplyStatusChange={() => {}}
       />,
     )
 
@@ -69,4 +101,3 @@ describe('InventoryBulkActionsBar', () => {
     expect(onClearSelection).toHaveBeenCalledTimes(1)
   })
 })
-

@@ -203,7 +203,9 @@ The `InventoryTable` now includes an **Actions column** with placeholder buttons
 These buttons are structural placeholders and do not perform navigation or state changes yet. They establish the UI foundation for item-level operations.
 
 - **Bulk selection foundation**: The inventory table now supports checkbox-based multi-row selection with a toolbar indicator showing how many items are selected and a clear-selection control, but no bulk actions are wired yet.
-- **Bulk actions bar shell**: When one or more rows are selected, an `InventoryBulkActionsBar` appears between filters and the table, showing the selected count and placeholder bulk action buttons (Move, Change status, Write off) alongside a functional Clear control; the bulk actions themselves are not implemented yet and currently act as UI-only placeholders.
+- **Bulk actions bar**: When one or more rows are selected, an `InventoryBulkActionsBar` appears between filters and the table, showing the selected count and bulk action controls:
+  - **Change status**: First functional bulk action, currently implemented entirely in local frontend state. Applying a new status updates all selected items (and the currently selected details item, if included) in page state and then clears the bulk selection. No backend/API persistence exists yet.
+  - **Move** and **Write off**: Still non-functional placeholders reserved for future bulk behaviors.
 
 ---
 
