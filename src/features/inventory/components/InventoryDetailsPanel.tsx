@@ -6,7 +6,10 @@ interface InventoryDetailsPanelProps {
   onClose?: () => void
 }
 
-export function InventoryDetailsPanel({ item }: InventoryDetailsPanelProps) {
+export function InventoryDetailsPanel({
+  item,
+  onClose,
+}: InventoryDetailsPanelProps) {
   if (!item) {
     return (
       <section className="page-section inventory-details">
@@ -20,13 +23,24 @@ export function InventoryDetailsPanel({ item }: InventoryDetailsPanelProps) {
   return (
     <section className="page-section inventory-details">
       <header className="inventory-details-header">
-        <h2 className="inventory-details-title">
-          {item.name}
-          <StatusBadge status={item.status} />
-        </h2>
-        <p className="inventory-details-subtitle">
-          SKU {item.sku} · {item.unit}
-        </p>
+        <div className="inventory-details-header-main">
+          <h2 className="inventory-details-title">
+            {item.name}
+            <StatusBadge status={item.status} />
+          </h2>
+          <p className="inventory-details-subtitle">
+            SKU {item.sku} · {item.unit}
+          </p>
+        </div>
+        {typeof onClose === 'function' && (
+          <button
+            type="button"
+            className="inventory-details-close-button"
+            onClick={onClose}
+          >
+            Close details panel
+          </button>
+        )}
       </header>
 
       <dl className="inventory-details-grid">
