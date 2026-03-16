@@ -172,5 +172,48 @@ describe('InventoryRowActions', () => {
     ).not.toBeInTheDocument()
     expect(moreButton).toHaveFocus()
   })
+
+  it('supports ArrowUp and ArrowDown navigation between overflow menu items', async () => {
+    const user = userEvent.setup()
+
+    render(<InventoryRowActions />)
+
+    const moreButton = screen.getByRole('button', { name: 'More' })
+
+    await user.click(moreButton)
+
+    const openDetailsItem = screen.getByRole('menuitem', {
+      name: 'Open details',
+    })
+    const editItem = screen.getByRole('menuitem', {
+      name: 'Edit item',
+    })
+    const viewHistoryItem = screen.getByRole('menuitem', {
+      name: 'View history',
+    })
+
+    // First menu item should have focus initially (from focus-management behavior)
+    expect(openDetailsItem).toHaveFocus()
+
+    // ArrowDown: Open details -> Edit item
+    await user.keyboard('{ArrowDown}')
+    expect(editItem).toHaveFocus()
+
+    // ArrowDown: Edit item -> View history
+    await user.keyboard('{ArrowDown}')
+    expect(viewHistoryItem).toHaveFocus()
+
+    // ArrowDown: View history -> wraps to Open details
+    await user.keyboard('{ArrowDown}')
+    expect(openDetailsItem).toHaveFocus()
+
+    // ArrowUp: Open details -> wraps to View history
+    await user.keyboard('{ArrowUp}')
+    expect(viewHistoryItem).toHaveFocus()
+
+    // ArrowUp: View history -> Edit item
+    await user.keyboard('{ArrowUp}')
+    expect(editItem).toHaveFocus()
+  })
 })
 
