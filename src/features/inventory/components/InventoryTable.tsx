@@ -7,12 +7,16 @@ interface InventoryTableProps {
   items?: Item[]
   selectedItemId?: string
   onSelectItem?: (item: Item) => void
+  bulkSelectedItemIds?: string[]
+  onToggleBulkSelect?: (itemId: string) => void
 }
 
 export function InventoryTable({
   items,
   selectedItemId,
   onSelectItem,
+  bulkSelectedItemIds,
+  onToggleBulkSelect,
 }: InventoryTableProps) {
   const itemsToRender = items ?? mockItems
   const hasItems = itemsToRender.length > 0
@@ -23,6 +27,12 @@ export function InventoryTable({
         <table className="inventory-table">
           <thead className="inventory-table-header">
             <tr>
+              <th
+                scope="col"
+                className="inventory-table-cell inventory-table-cell--checkbox"
+              >
+                <span className="sr-only">Select item</span>
+              </th>
               <th scope="col">Name</th>
               <th scope="col">SKU</th>
               <th scope="col">Unit</th>
@@ -34,6 +44,7 @@ export function InventoryTable({
             {hasItems ? (
               itemsToRender.map((item) => {
                 const isSelected = item.id === selectedItemId
+                const isBulkSelected = bulkSelectedItemIds?.includes(item.id)
 
                 return (
                   <tr
@@ -42,6 +53,15 @@ export function InventoryTable({
                       isSelected ? ' inventory-table-row--selected' : ''
                     }`}
                   >
+                    <td className="inventory-table-cell inventory-table-cell--checkbox">
+                      <input
+                        type="checkbox"
+                        className="inventory-table-checkbox"
+                        checked={!!isBulkSelected}
+                        onChange={() => onToggleBulkSelect?.(item.id)}
+                        aria-label={`Select ${item.name}`}
+                      />
+                    </td>
                     <td className="inventory-table-cell inventory-table-cell--primary">
                       {item.name}
                       <StatusBadge status={item.status} />

@@ -12,6 +12,7 @@ export function InventoryPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [sortField, setSortField] = useState<'name' | 'created'>('name')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+  const [bulkSelectedItemIds, setBulkSelectedItemIds] = useState<string[]>([])
 
   const normalizedQuery = searchQuery.trim().toLowerCase()
   const filteredItems = normalizedQuery
@@ -40,6 +41,18 @@ export function InventoryPage() {
     return sortDirection === 'asc' ? compareValue : -compareValue
   })
 
+  const handleToggleBulkSelect = (itemId: string) => {
+    setBulkSelectedItemIds((previous) =>
+      previous.includes(itemId)
+        ? previous.filter((id) => id !== itemId)
+        : [...previous, itemId],
+    )
+  }
+
+  const handleClearBulkSelection = () => {
+    setBulkSelectedItemIds([])
+  }
+
   useEffect(() => {
     if (!selectedItem) return
 
@@ -61,6 +74,8 @@ export function InventoryPage() {
       <InventoryToolbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        bulkSelectedCount={bulkSelectedItemIds.length}
+        onClearBulkSelection={handleClearBulkSelection}
       />
       <InventoryFilters
         onSortFieldChange={setSortField}
@@ -73,6 +88,8 @@ export function InventoryPage() {
               items={sortedItems}
               selectedItemId={selectedItem?.id}
               onSelectItem={setSelectedItem}
+              bulkSelectedItemIds={bulkSelectedItemIds}
+              onToggleBulkSelect={handleToggleBulkSelect}
             />
           </div>
           <div className="inventory-workspace-details">

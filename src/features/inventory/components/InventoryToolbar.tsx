@@ -1,11 +1,15 @@
 interface InventoryToolbarProps {
   searchQuery: string
   onSearchChange: (value: string) => void
+  bulkSelectedCount?: number
+  onClearBulkSelection?: () => void
 }
 
 export function InventoryToolbar({
   searchQuery,
   onSearchChange,
+  bulkSelectedCount = 0,
+  onClearBulkSelection,
 }: InventoryToolbarProps) {
   return (
     <section className="page-section inventory-toolbar">
@@ -23,6 +27,20 @@ export function InventoryToolbar({
           <button type="button" className="inventory-toolbar-add-button">
             Add Item
           </button>
+          {bulkSelectedCount > 0 && (
+            <div className="inventory-toolbar-bulk-selection">
+              <span className="inventory-toolbar-bulk-selection-text">
+                {bulkSelectedCount} {bulkSelectedCount === 1 ? 'item' : 'items'} selected
+              </span>
+              <button
+                type="button"
+                className="inventory-toolbar-bulk-clear-button"
+                onClick={onClearBulkSelection}
+              >
+                Clear selection
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </section>

@@ -253,9 +253,10 @@ describe('InventoryPage', () => {
 
     const tableAsc = screen.getByRole('table')
     const rowsAsc = within(tableAsc).getAllByRole('row').slice(1)
-    const namesAsc = rowsAsc.map(
-      (row) => row.querySelector('td')?.textContent?.trim() ?? '',
-    )
+    const namesAsc = rowsAsc.map((row) => {
+      const nameCell = row.querySelector('td:nth-of-type(2)')
+      return nameCell?.textContent?.trim() ?? ''
+    })
 
     expect(namesAsc).toEqual(expectedAscNames)
 
@@ -265,9 +266,10 @@ describe('InventoryPage', () => {
 
     const tableDesc = screen.getByRole('table')
     const rowsDesc = within(tableDesc).getAllByRole('row').slice(1)
-    const namesDesc = rowsDesc.map(
-      (row) => row.querySelector('td')?.textContent?.trim() ?? '',
-    )
+    const namesDesc = rowsDesc.map((row) => {
+      const nameCell = row.querySelector('td:nth-of-type(2)')
+      return nameCell?.textContent?.trim() ?? ''
+    })
 
     expect(namesDesc).toEqual(expectedDescNames)
   })
@@ -294,9 +296,10 @@ describe('InventoryPage', () => {
 
     const tableAsc = screen.getByRole('table')
     const rowsAsc = within(tableAsc).getAllByRole('row').slice(1)
-    const namesAsc = rowsAsc.map(
-      (row) => row.querySelector('td')?.textContent?.trim() ?? '',
-    )
+    const namesAsc = rowsAsc.map((row) => {
+      const nameCell = row.querySelector('td:nth-of-type(2)')
+      return nameCell?.textContent?.trim() ?? ''
+    })
 
     expect(namesAsc).toEqual(expectedAscNamesByCreated)
 
@@ -306,9 +309,10 @@ describe('InventoryPage', () => {
 
     const tableDesc = screen.getByRole('table')
     const rowsDesc = within(tableDesc).getAllByRole('row').slice(1)
-    const namesDesc = rowsDesc.map(
-      (row) => row.querySelector('td')?.textContent?.trim() ?? '',
-    )
+    const namesDesc = rowsDesc.map((row) => {
+      const nameCell = row.querySelector('td:nth-of-type(2)')
+      return nameCell?.textContent?.trim() ?? ''
+    })
 
     expect(namesDesc).toEqual(expectedDescNamesByCreated)
   })
@@ -346,6 +350,64 @@ describe('InventoryPage', () => {
     expect(selectedRow as HTMLElement).toHaveClass(
       'inventory-table-row--selected',
     )
+  })
+
+  it('allows selecting multiple rows via checkboxes and shows the correct bulk selection count', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const cardboardCheckbox = screen.getByRole('checkbox', {
+      name: 'Select Cardboard Box',
+    })
+    const palletJackCheckbox = screen.getByRole('checkbox', {
+      name: 'Select Electric Pallet Jack',
+    })
+
+    expect(cardboardCheckbox).not.toBeChecked()
+    expect(palletJackCheckbox).not.toBeChecked()
+    expect(
+      screen.queryByText(/items selected$/),
+    ).not.toBeInTheDocument()
+
+    await user.click(cardboardCheckbox)
+    await user.click(palletJackCheckbox)
+
+    expect(cardboardCheckbox).toBeChecked()
+    expect(palletJackCheckbox).toBeChecked()
+    expect(
+      screen.getByText('2 items selected'),
+    ).toBeInTheDocument()
+  })
+
+  it('clears bulk selection state when Clear selection is clicked', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const cardboardCheckbox = screen.getByRole('checkbox', {
+      name: 'Select Cardboard Box',
+    })
+    const palletJackCheckbox = screen.getByRole('checkbox', {
+      name: 'Select Electric Pallet Jack',
+    })
+
+    await user.click(cardboardCheckbox)
+    await user.click(palletJackCheckbox)
+
+    expect(
+      screen.getByText('2 items selected'),
+    ).toBeInTheDocument()
+
+    const clearButton = screen.getByRole('button', {
+      name: 'Clear selection',
+    })
+
+    await user.click(clearButton)
+
+    expect(
+      screen.queryByText(/items selected$/),
+    ).not.toBeInTheDocument()
+    expect(cardboardCheckbox).not.toBeChecked()
+    expect(palletJackCheckbox).not.toBeChecked()
   })
 })
 

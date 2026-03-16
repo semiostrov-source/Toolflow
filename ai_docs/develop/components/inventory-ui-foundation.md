@@ -202,6 +202,8 @@ The `InventoryTable` now includes an **Actions column** with placeholder buttons
 
 These buttons are structural placeholders and do not perform navigation or state changes yet. They establish the UI foundation for item-level operations.
 
+- **Bulk selection foundation**: The inventory table now supports checkbox-based multi-row selection with a toolbar indicator showing how many items are selected and a clear-selection control, but no bulk actions are wired yet.
+
 ---
 
 ## Item Selection & Details Panel
