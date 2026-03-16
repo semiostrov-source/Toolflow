@@ -5,6 +5,7 @@ import { InventoryTable } from '../features/inventory/components/InventoryTable'
 import { InventoryToolbar } from '../features/inventory/components/InventoryToolbar'
 import { InventoryFilters } from '../features/inventory/components/InventoryFilters'
 import { InventoryDetailsPanel } from '../features/inventory/components/InventoryDetailsPanel'
+import { InventoryBulkActionsBar } from '../features/inventory/components/InventoryBulkActionsBar'
 import { mockItems } from '../features/inventory/mock/items'
 
 export function InventoryPage() {
@@ -118,6 +119,12 @@ export function InventoryPage() {
         onSortFieldChange={setSortField}
         onSortDirectionChange={setSortDirection}
       />
+      {bulkSelectedItemIds.length > 0 && (
+        <InventoryBulkActionsBar
+          selectedCount={bulkSelectedItemIds.length}
+          onClearSelection={handleClearBulkSelection}
+        />
+      )}
       <div className="inventory-workspace">
         <div className="inventory-workspace-main">
           <div className="inventory-workspace-table">

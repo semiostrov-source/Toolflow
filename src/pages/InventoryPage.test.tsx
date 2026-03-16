@@ -382,8 +382,15 @@ describe('InventoryPage', () => {
       expect(rowCheckbox).toBeChecked()
     })
 
+    const toolbarBulkSelection = document.querySelector(
+      '.inventory-toolbar-bulk-selection',
+    ) as HTMLElement | null
+    expect(toolbarBulkSelection).not.toBeNull()
+
     expect(
-      screen.getByText(`${mockItems.length} items selected`),
+      within(toolbarBulkSelection as HTMLElement).getByText(
+        `${mockItems.length} items selected`,
+      ),
     ).toBeInTheDocument()
   })
 
@@ -405,8 +412,15 @@ describe('InventoryPage', () => {
       expect(rowCheckbox).toBeChecked()
     })
 
+    let toolbarBulkSelection = document.querySelector(
+      '.inventory-toolbar-bulk-selection',
+    ) as HTMLElement | null
+    expect(toolbarBulkSelection).not.toBeNull()
+
     expect(
-      screen.getByText(`${mockItems.length} items selected`),
+      within(toolbarBulkSelection as HTMLElement).getByText(
+        `${mockItems.length} items selected`,
+      ),
     ).toBeInTheDocument()
 
     await user.click(headerCheckbox)
@@ -419,9 +433,14 @@ describe('InventoryPage', () => {
       expect(rowCheckbox).not.toBeChecked()
     })
 
+    toolbarBulkSelection = document.querySelector(
+      '.inventory-toolbar-bulk-selection',
+    ) as HTMLElement | null
+
     expect(
-      screen.queryByText(/items selected$/),
-    ).not.toBeInTheDocument()
+      toolbarBulkSelection &&
+        within(toolbarBulkSelection).queryByText(/items selected$/),
+    ).toBeNull()
   })
 
   it('shows the indeterminate state on the header checkbox when some but not all visible rows are selected', async () => {
@@ -460,16 +479,22 @@ describe('InventoryPage', () => {
     expect(cardboardCheckbox).not.toBeChecked()
     expect(palletJackCheckbox).not.toBeChecked()
     expect(
-      screen.queryByText(/items selected$/),
-    ).not.toBeInTheDocument()
+      document.querySelector('.inventory-toolbar-bulk-selection'),
+    ).toBeNull()
 
     await user.click(cardboardCheckbox)
     await user.click(palletJackCheckbox)
 
     expect(cardboardCheckbox).toBeChecked()
     expect(palletJackCheckbox).toBeChecked()
+
+    const toolbarBulkSelection = document.querySelector(
+      '.inventory-toolbar-bulk-selection',
+    ) as HTMLElement | null
+    expect(toolbarBulkSelection).not.toBeNull()
+
     expect(
-      screen.getByText('2 items selected'),
+      within(toolbarBulkSelection as HTMLElement).getByText('2 items selected'),
     ).toBeInTheDocument()
   })
 
@@ -487,8 +512,13 @@ describe('InventoryPage', () => {
     await user.click(cardboardCheckbox)
     await user.click(palletJackCheckbox)
 
+    let toolbarBulkSelection = document.querySelector(
+      '.inventory-toolbar-bulk-selection',
+    ) as HTMLElement | null
+    expect(toolbarBulkSelection).not.toBeNull()
+
     expect(
-      screen.getByText('2 items selected'),
+      within(toolbarBulkSelection as HTMLElement).getByText('2 items selected'),
     ).toBeInTheDocument()
 
     const clearButton = screen.getByRole('button', {
@@ -497,9 +527,14 @@ describe('InventoryPage', () => {
 
     await user.click(clearButton)
 
+    toolbarBulkSelection = document.querySelector(
+      '.inventory-toolbar-bulk-selection',
+    ) as HTMLElement | null
+
     expect(
-      screen.queryByText(/items selected$/),
-    ).not.toBeInTheDocument()
+      toolbarBulkSelection &&
+        within(toolbarBulkSelection).queryByText(/items selected$/),
+    ).toBeNull()
     expect(cardboardCheckbox).not.toBeChecked()
     expect(palletJackCheckbox).not.toBeChecked()
   })

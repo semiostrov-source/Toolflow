@@ -331,6 +331,31 @@ a:hover {
   margin-top: 0.5rem;
 }
 
+.inventory-toolbar-bulk-selection {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.inventory-toolbar-bulk-selection-text {
+  font-size: 0.8rem;
+  color: #57606a;
+}
+
+.inventory-toolbar-bulk-clear-button {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid #d0d7de;
+  background-color: #ffffff;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.inventory-toolbar-bulk-clear-button:hover {
+  background-color: #f0f4f8;
+}
+
 .inventory-filters {
   margin-top: 0.5rem;
 }
@@ -452,6 +477,29 @@ a:hover {
 
 .inventory-workspace {
   margin-top: 0.5rem;
+}
+
+.inventory-bulk-actions-bar {
+  margin-top: 0.5rem;
+}
+
+.inventory-bulk-actions-main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.inventory-bulk-actions-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.inventory-bulk-actions-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
 }
 
 .inventory-workspace-main {
