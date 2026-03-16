@@ -27,6 +27,11 @@ export function InventoryRowOverflowMenu({
         role="menu"
         aria-label="Inventory row actions"
         onKeyDown={(event) => {
+          if (event.key === 'Tab') {
+            onClose?.()
+            return
+          }
+
           if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') {
             return
           }

@@ -215,5 +215,28 @@ describe('InventoryRowActions', () => {
     await user.keyboard('{ArrowUp}')
     expect(editItem).toHaveFocus()
   })
+
+  it('closes the overflow menu when Tab is pressed inside the menu', async () => {
+    const user = userEvent.setup()
+
+    render(<InventoryRowActions />)
+
+    const moreButton = screen.getByRole('button', { name: 'More' })
+
+    await user.click(moreButton)
+
+    const openDetailsItem = screen.getByRole('menuitem', {
+      name: 'Open details',
+    })
+
+    expect(openDetailsItem).toHaveFocus()
+
+    await user.keyboard('{Tab}')
+
+    expect(
+      screen.queryByRole('menu', { name: 'Inventory row actions' }),
+    ).not.toBeInTheDocument()
+    expect(moreButton).toHaveAttribute('aria-expanded', 'false')
+  })
 })
 
