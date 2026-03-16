@@ -681,5 +681,142 @@ describe('InventoryPage', () => {
       within(updatedDetailsHeader as HTMLElement).getByTitle('Maintenance'),
     ).toBeInTheDocument()
   })
+
+  it('enters inline status edit mode when the status badge is clicked', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
+    expect(cardBoardRow).not.toBeNull()
+
+    const row = cardBoardRow as HTMLTableRowElement
+
+    // Sanity check: initial status badge is rendered
+    expect(within(row).getByTitle('Available')).toBeInTheDocument()
+
+    const statusButton = row.querySelector(
+      'button.inventory-table-status-button',
+    ) as HTMLButtonElement | null
+
+    expect(statusButton).not.toBeNull()
+
+    await user.click(statusButton as HTMLButtonElement)
+
+    // Inline select appears in place of the badge for this row
+    const statusSelect = row.querySelector(
+      'select.inventory-table-status-select',
+    ) as HTMLSelectElement | null
+
+    expect(statusSelect).not.toBeNull()
+    expect(
+      within(row).queryByTitle('Available'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('updates the status badge when a new status is selected inline', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
+    expect(cardBoardRow).not.toBeNull()
+
+    const row = cardBoardRow as HTMLTableRowElement
+
+    const statusButton = row.querySelector(
+      'button.inventory-table-status-button',
+    ) as HTMLButtonElement | null
+    expect(statusButton).not.toBeNull()
+
+    await user.click(statusButton as HTMLButtonElement)
+
+    const statusSelect = row.querySelector(
+      'select.inventory-table-status-select',
+    ) as HTMLSelectElement | null
+    expect(statusSelect).not.toBeNull()
+
+    // Change from Available to Maintenance
+    await user.selectOptions(statusSelect as HTMLSelectElement, 'maintenance')
+
+    // Editing mode ends and the updated badge appears
+    expect(
+      row.querySelector('select.inventory-table-status-select'),
+    ).toBeNull()
+    expect(
+      await within(row).findByTitle('Maintenance'),
+    ).toBeInTheDocument()
+  })
+
+  it('cancels inline status editing when clicking outside the editor', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
+    expect(cardBoardRow).not.toBeNull()
+
+    const row = cardBoardRow as HTMLTableRowElement
+
+    const statusButton = row.querySelector(
+      'button.inventory-table-status-button',
+    ) as HTMLButtonElement | null
+    expect(statusButton).not.toBeNull()
+
+    await user.click(statusButton as HTMLButtonElement)
+
+    // Ensure we are in edit mode
+    expect(
+      row.querySelector('select.inventory-table-status-select'),
+    ).not.toBeNull()
+
+    // Click clearly outside the table/editor (page header)
+    const header = screen.getByRole('heading', { name: 'Inventory' })
+    await user.click(header)
+
+    // Edit mode is cancelled and original status badge remains unchanged
+    expect(
+      row.querySelector('select.inventory-table-status-select'),
+    ).toBeNull()
+    expect(
+      within(row).getByTitle('Available'),
+    ).toBeInTheDocument()
+    expect(
+      within(row).queryByTitle('Maintenance'),
+    ).toBeNull()
+  })
+
+  it('cancels inline status editing when Escape is pressed', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
+    expect(cardBoardRow).not.toBeNull()
+
+    const row = cardBoardRow as HTMLTableRowElement
+
+    const statusButton = row.querySelector(
+      'button.inventory-table-status-button',
+    ) as HTMLButtonElement | null
+    expect(statusButton).not.toBeNull()
+
+    await user.click(statusButton as HTMLButtonElement)
+
+    const statusSelect = row.querySelector(
+      'select.inventory-table-status-select',
+    ) as HTMLSelectElement | null
+    expect(statusSelect).not.toBeNull()
+
+    // Focus the select and press Escape to cancel editing
+    await user.click(statusSelect as HTMLSelectElement)
+    await user.keyboard('{Escape}')
+
+    expect(
+      row.querySelector('select.inventory-table-status-select'),
+    ).toBeNull()
+    expect(
+      within(row).getByTitle('Available'),
+    ).toBeInTheDocument()
+    expect(
+      within(row).queryByTitle('Maintenance'),
+    ).toBeNull()
+  })
 })
 

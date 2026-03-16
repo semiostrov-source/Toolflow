@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react'
-import type { Item } from '..'
+import { useEffect, useRef, useState } from 'react'
+import type { Item, ItemStatus } from '..'
 import { StatusBadge } from './StatusBadge'
 import { mockItems } from '../mock/items'
 import { InventoryRowActions } from './InventoryRowActions'
@@ -13,6 +13,7 @@ interface InventoryTableProps {
   allVisibleSelected?: boolean
   someVisibleSelected?: boolean
   onToggleSelectAllVisible?: () => void
+  onChangeItemStatus?: (itemId: string, status: ItemStatus) => void
 }
 
 export function InventoryTable({
@@ -24,11 +25,16 @@ export function InventoryTable({
   allVisibleSelected,
   someVisibleSelected,
   onToggleSelectAllVisible,
+  onChangeItemStatus,
 }: InventoryTableProps) {
   const itemsToRender = items ?? mockItems
   const hasItems = itemsToRender.length > 0
 
   const headerCheckboxRef = useRef<HTMLInputElement | null>(null)
+  const statusEditorRef = useRef<HTMLDivElement | null>(null)
+
+  const [editingItemId, setEditingItemId] = useState<string | null>(null)
+  const [editingStatus, setEditingStatus] = useState<ItemStatus | null>(null)
 
   useEffect(() => {
     if (!headerCheckboxRef.current) return
@@ -36,6 +42,32 @@ export function InventoryTable({
     headerCheckboxRef.current.indeterminate =
       !!someVisibleSelected && !allVisibleSelected && hasItems
   }, [someVisibleSelected, allVisibleSelected, hasItems])
+
+  useEffect(() => {
+    if (!editingItemId) return
+
+    const handleDocumentMouseDown = (event: MouseEvent) => {
+      if (!statusEditorRef.current) return
+      if (statusEditorRef.current.contains(event.target as Node)) return
+
+      setEditingItemId(null)
+      setEditingStatus(null)
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setEditingItemId(null)
+      setEditingStatus(null)
+    }
+
+    document.addEventListener('mousedown', handleDocumentMouseDown)
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('mousedown', handleDocumentMouseDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [editingItemId])
 
   return (
     <section className="page-section">
@@ -69,6 +101,7 @@ export function InventoryTable({
               itemsToRender.map((item) => {
                 const isSelected = item.id === selectedItemId
                 const isBulkSelected = bulkSelectedItemIds?.includes(item.id)
+                const isEditing = editingItemId === item.id
 
                 return (
                   <tr
@@ -88,7 +121,42 @@ export function InventoryTable({
                     </td>
                     <td className="inventory-table-cell inventory-table-cell--primary">
                       {item.name}
-                      <StatusBadge status={item.status} />
+                      {isEditing ? (
+                        <div
+                          ref={statusEditorRef}
+                          className="inventory-table-status-editor"
+                        >
+                          <select
+                            className="inventory-table-status-select"
+                            value={editingStatus ?? item.status}
+                            onChange={(event) => {
+                              const nextStatus = event.target
+                                .value as ItemStatus
+
+                              onChangeItemStatus?.(item.id, nextStatus)
+                              setEditingItemId(null)
+                              setEditingStatus(null)
+                            }}
+                          >
+                            <option value="available">Available</option>
+                            <option value="in_use">In use</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="written_off">Written off</option>
+                          </select>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="inventory-table-status-button"
+                          onClick={(event) => {
+                            event.stopPropagation()
+                            setEditingItemId(item.id)
+                            setEditingStatus(item.status)
+                          }}
+                        >
+                          <StatusBadge status={item.status} />
+                        </button>
+                      )}
                     </td>
                     <td className="inventory-table-cell">{item.sku}</td>
                     <td className="inventory-table-cell">{item.unit}</td>

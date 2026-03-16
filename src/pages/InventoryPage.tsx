@@ -121,6 +121,21 @@ export function InventoryPage() {
     setBulkStatus('')
   }
 
+  const handleChangeItemStatus = (itemId: string, status: ItemStatus) => {
+    setItems((previousItems) =>
+      previousItems.map((item) =>
+        item.id === itemId ? { ...item, status } : item,
+      ),
+    )
+
+    setSelectedItem((previousSelected) => {
+      if (!previousSelected) return previousSelected
+      if (previousSelected.id !== itemId) return previousSelected
+
+      return { ...previousSelected, status }
+    })
+  }
+
   useEffect(() => {
     if (!selectedItem) return
 
@@ -170,6 +185,7 @@ export function InventoryPage() {
               allVisibleSelected={allVisibleSelected}
               someVisibleSelected={someVisibleSelected}
               onToggleSelectAllVisible={handleToggleSelectAllVisible}
+              onChangeItemStatus={handleChangeItemStatus}
             />
           </div>
           <div className="inventory-workspace-details">

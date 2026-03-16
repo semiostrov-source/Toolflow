@@ -206,6 +206,7 @@ These buttons are structural placeholders and do not perform navigation or state
 - **Bulk actions bar**: When one or more rows are selected, an `InventoryBulkActionsBar` appears between filters and the table, showing the selected count and bulk action controls:
   - **Change status**: First functional bulk action, currently implemented entirely in local frontend state. Applying a new status updates all selected items (and the currently selected details item, if included) in page state and then clears the bulk selection. No backend/API persistence exists yet.
   - **Move** and **Write off**: Still non-functional placeholders reserved for future bulk behaviors.
+  - **Inline single-item status editing**: Individual item statuses can also be updated directly in the table by clicking the row’s `StatusBadge`, which temporarily swaps to a status select for that row only; confirming a new status updates local page state and restores the badge, while clicking outside or pressing Escape cancels the edit. Bulk status changes for multiple selected items remain available via the `Change status` action in the bulk actions bar.
 
 ---
 
