@@ -57,6 +57,34 @@ describe('InventoryPage', () => {
     ).toBeInTheDocument()
   })
 
+  it('closes the details panel when Escape is pressed', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
+    expect(cardBoardRow).not.toBeNull()
+
+    const viewButton = within(cardBoardRow as HTMLTableRowElement).getByRole(
+      'button',
+      { name: 'View' },
+    )
+
+    await user.click(viewButton)
+
+    expect(
+      screen.getByRole('heading', { name: /Cardboard Box/i }),
+    ).toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
+
+    expect(
+      screen.queryByRole('heading', { name: /Cardboard Box/i }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByText('Select an inventory item to view details'),
+    ).toBeInTheDocument()
+  })
+
   it('shows item details and highlights the selected row when View is clicked', async () => {
     renderInventoryPage()
     const user = userEvent.setup()

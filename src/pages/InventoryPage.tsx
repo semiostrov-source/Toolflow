@@ -121,6 +121,26 @@ export function InventoryPage() {
     setBulkStatus('')
   }
 
+  const handleCloseDetails = () => {
+    setSelectedItem(null)
+  }
+
+  useEffect(() => {
+    if (!selectedItem) return
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleCloseDetails()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [selectedItem])
+
   const handleChangeItemStatus = (itemId: string, status: ItemStatus) => {
     setItems((previousItems) =>
       previousItems.map((item) =>
@@ -189,7 +209,7 @@ export function InventoryPage() {
             />
           </div>
           <div className="inventory-workspace-details">
-            <InventoryDetailsPanel item={selectedItem} />
+            <InventoryDetailsPanel item={selectedItem} onClose={handleCloseDetails} />
           </div>
         </div>
       </div>

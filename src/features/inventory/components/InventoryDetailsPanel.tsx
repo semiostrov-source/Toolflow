@@ -3,6 +3,7 @@ import { StatusBadge } from './StatusBadge'
 
 interface InventoryDetailsPanelProps {
   item: Item | null
+  onClose?: () => void
 }
 
 export function InventoryDetailsPanel({ item }: InventoryDetailsPanelProps) {
