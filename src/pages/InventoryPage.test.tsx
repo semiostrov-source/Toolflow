@@ -215,6 +215,44 @@ describe('InventoryPage', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('clears the search input and restores all items when Escape is pressed in the search field', async () => {
+    vi.useFakeTimers()
+    renderInventoryPage()
+
+    const searchInput = screen.getByPlaceholderText('Search items')
+
+    fireEvent.change(searchInput, { target: { value: 'card' } })
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
+
+    // Cardboard Box (name contains "card") remains visible
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
+
+    // Other items are filtered out
+    expect(screen.queryByText('Shipping Label')).not.toBeInTheDocument()
+    expect(screen.queryByText('Packing Tape')).not.toBeInTheDocument()
+
+    fireEvent.keyDown(searchInput, { key: 'Escape', code: 'Escape' })
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
+
+    expect(searchInput).toHaveValue('')
+
+    // All items are visible again after clearing
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Shipping Label')).toBeInTheDocument()
+    expect(screen.getByText('Packing Tape')).toBeInTheDocument()
+
+    // The empty table state should not be shown
+    expect(
+      screen.queryByText('No inventory items yet'),
+    ).not.toBeInTheDocument()
+  })
+
   it('filters items by SKU when searching', async () => {
     vi.useFakeTimers()
     renderInventoryPage()

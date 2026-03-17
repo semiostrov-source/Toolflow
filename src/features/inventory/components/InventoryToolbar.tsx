@@ -21,6 +21,12 @@ export function InventoryToolbar({
             className="inventory-toolbar-search-input"
             value={searchQuery}
             onChange={(event) => onSearchChange(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape' && searchQuery) {
+                event.stopPropagation()
+                onSearchChange('')
+              }
+            }}
           />
         </div>
         <div className="inventory-toolbar-actions">
