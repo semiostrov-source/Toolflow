@@ -410,8 +410,8 @@ describe('InventoryPage', () => {
     expect(screen.queryByText('Shipping Label')).not.toBeInTheDocument()
     expect(screen.queryByText('Packing Tape')).not.toBeInTheDocument()
 
-    // InventoryTable reuses its existing empty-state message
-    expect(screen.getByText('No inventory items yet')).toBeInTheDocument()
+    // Page-level status div shows the contextual empty-state message
+    expect(screen.getByText('No inventory items match your search')).toBeInTheDocument()
 
     // Contextual empty state shows a clear search action
     const emptyActions = document.querySelector(
@@ -441,7 +441,7 @@ describe('InventoryPage', () => {
     expect(screen.queryByText('Cardboard Box')).not.toBeInTheDocument()
     expect(screen.queryByText('Shipping Label')).not.toBeInTheDocument()
     expect(screen.queryByText('Packing Tape')).not.toBeInTheDocument()
-    expect(screen.getByText('No inventory items yet')).toBeInTheDocument()
+    expect(screen.getByText('No inventory items match your search')).toBeInTheDocument()
 
     const emptyActions = document.querySelector(
       '.inventory-table-empty-actions',
@@ -1227,7 +1227,7 @@ describe('InventoryPage', () => {
     })
 
     // Sanity check: table is in filtered-empty state
-    expect(screen.getByText('No inventory items yet')).toBeInTheDocument()
+    expect(screen.getByText('No inventory items match your search')).toBeInTheDocument()
 
     const emptyActions = document.querySelector(
       '.inventory-table-empty-actions',
@@ -1242,6 +1242,69 @@ describe('InventoryPage', () => {
 
     expect(searchInput).toHaveValue('')
     expect(document.activeElement).toBe(searchInput)
+  })
+
+  it('shows search-specific empty state when no items match the query', async () => {
+    vi.useFakeTimers()
+    renderInventoryPage()
+
+    const searchInput = screen.getByPlaceholderText('Search items')
+
+    fireEvent.change(searchInput, {
+      target: { value: 'no-matching-item-query' },
+    })
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
+
+    // The contextual empty state div with role="status" is rendered
+    const emptyState = screen.getByRole('status')
+    expect(emptyState).toBeInTheDocument()
+    expect(
+      within(emptyState).getByText('No inventory items match your search'),
+    ).toBeInTheDocument()
+    expect(
+      within(emptyState).getByText('Try a different name or SKU'),
+    ).toBeInTheDocument()
+
+    // The clear search action is present inside the actions container
+    const emptyActions = document.querySelector(
+      '.inventory-table-empty-actions',
+    ) as HTMLElement
+    expect(emptyActions).not.toBeNull()
+    expect(
+      within(emptyActions).getByRole('button', { name: 'Clear search' }),
+    ).toBeInTheDocument()
+  })
+
+  it('shows result count when search is active', async () => {
+    vi.useFakeTimers()
+    renderInventoryPage()
+
+    // No result count shown before any search is typed
+    expect(screen.queryByText(/item.*found/i)).not.toBeInTheDocument()
+
+    const searchInput = screen.getByPlaceholderText('Search items')
+
+    // "card" matches only "Cardboard Box" — produces a count of 1
+    fireEvent.change(searchInput, { target: { value: 'card' } })
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
+
+    // Result count paragraph is rendered
+    expect(screen.getByText(/1 item found/i)).toBeInTheDocument()
+
+    // Clearing the search removes the result count paragraph
+    fireEvent.change(searchInput, { target: { value: '' } })
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
+
+    expect(screen.queryByText(/item.*found/i)).not.toBeInTheDocument()
   })
 })
 

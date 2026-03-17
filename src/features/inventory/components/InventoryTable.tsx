@@ -14,6 +14,8 @@ interface InventoryTableProps {
   someVisibleSelected?: boolean
   onToggleSelectAllVisible?: () => void
   onChangeItemStatus?: (itemId: string, status: ItemStatus) => void
+  emptyMessage?: string
+  hideEmpty?: boolean
 }
 
 export function InventoryTable({
@@ -26,6 +28,8 @@ export function InventoryTable({
   someVisibleSelected,
   onToggleSelectAllVisible,
   onChangeItemStatus,
+  emptyMessage = 'No inventory items yet',
+  hideEmpty = false,
 }: InventoryTableProps) {
   const itemsToRender = items ?? mockItems
   const hasItems = itemsToRender.length > 0
@@ -203,13 +207,13 @@ export function InventoryTable({
                   </tr>
                 )
               })
-            ) : (
+            ) : !hideEmpty ? (
               <tr className="inventory-table-empty-row">
                 <td colSpan={6} className="inventory-table-empty">
-                  No inventory items yet
+                  {emptyMessage}
                 </td>
               </tr>
-            )}
+            ) : null}
           </tbody>
         </table>
       </div>

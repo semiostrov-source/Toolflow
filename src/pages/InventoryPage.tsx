@@ -220,6 +220,11 @@ export function InventoryPage() {
       <div className="inventory-workspace">
         <div className="inventory-workspace-main">
           <div className="inventory-workspace-table">
+            <p aria-live="polite" className="inventory-search-result-count">
+              {searchQuery !== '' && sortedItems.length > 0
+                ? `${sortedItems.length} ${sortedItems.length === 1 ? 'item' : 'items'} found`
+                : ''}
+            </p>
             <InventoryTable
               items={sortedItems}
               selectedItemId={selectedItem?.id}
@@ -230,7 +235,16 @@ export function InventoryPage() {
               someVisibleSelected={someVisibleSelected}
               onToggleSelectAllVisible={handleToggleSelectAllVisible}
               onChangeItemStatus={handleChangeItemStatus}
+              hideEmpty={isFilteredEmpty}
             />
+            <div role="status" className="inventory-search-empty-state" aria-atomic="true">
+              {isFilteredEmpty && (
+                <>
+                  <p>No inventory items match your search</p>
+                  <p>Try a different name or SKU</p>
+                </>
+              )}
+            </div>
             {isFilteredEmpty && (
               <div className="inventory-table-empty-actions">
                 <button

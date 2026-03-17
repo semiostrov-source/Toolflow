@@ -33,6 +33,7 @@ export const InventoryToolbar = forwardRef<HTMLInputElement, InventoryToolbarPro
               ref={mergedRef}
               type="search"
               placeholder="Search items"
+              aria-label="Search inventory"
               className="inventory-toolbar-search-input"
               value={searchQuery}
               onChange={(event) => onSearchChange(event.target.value)}
