@@ -28,6 +28,16 @@ export function InventoryToolbar({
               }
             }}
           />
+          {searchQuery && (
+            <button
+              type="button"
+              className="inventory-toolbar-search-clear-button"
+              aria-label="Clear search"
+              onClick={() => onSearchChange('')}
+            >
+              Clear
+            </button>
+          )}
         </div>
         <div className="inventory-toolbar-actions">
           <button type="button" className="inventory-toolbar-add-button">

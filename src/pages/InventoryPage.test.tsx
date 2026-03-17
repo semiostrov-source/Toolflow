@@ -253,6 +253,41 @@ describe('InventoryPage', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('shows and uses a clear button for the search input', async () => {
+    vi.useFakeTimers()
+    renderInventoryPage()
+
+    const searchInput = screen.getByPlaceholderText('Search items')
+
+    // Initially, the clear button is not rendered
+    expect(
+      screen.queryByRole('button', { name: 'Clear search' }),
+    ).not.toBeInTheDocument()
+
+    fireEvent.change(searchInput, { target: { value: 'card' } })
+
+    // Clear button appears when there is a non-empty query
+    const clearButton = screen.getByRole('button', { name: 'Clear search' })
+    expect(clearButton).toBeInTheDocument()
+
+    fireEvent.click(clearButton)
+
+    // Input value is cleared immediately
+    expect(searchInput).toHaveValue('')
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
+
+    // After debounce, all baseline items are visible again
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Shipping Label')).toBeInTheDocument()
+    expect(screen.getByText('Packing Tape')).toBeInTheDocument()
+    expect(
+      screen.queryByText('No inventory items yet'),
+    ).not.toBeInTheDocument()
+  })
+
   it('filters items by SKU when searching', async () => {
     vi.useFakeTimers()
     renderInventoryPage()
