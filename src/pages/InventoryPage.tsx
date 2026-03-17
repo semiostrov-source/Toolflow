@@ -14,10 +14,23 @@ export function InventoryPage() {
   const [items, setItems] = useState<Item[]>(mockItems)
   const [selectedItem, setSelectedItem] = useState<Item | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchInput, setSearchInput] = useState('')
   const [sortField, setSortField] = useState<'name' | 'created'>('name')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [bulkSelectedItemIds, setBulkSelectedItemIds] = useState<string[]>([])
   const [bulkStatus, setBulkStatus] = useState<ItemStatus | ''>('')
+
+  useEffect(() => {
+    const debounceDelay = 300
+
+    const timeoutId = window.setTimeout(() => {
+      setSearchQuery(searchInput)
+    }, debounceDelay)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [searchInput])
 
   const normalizedQuery = searchQuery.trim().toLowerCase()
   const filteredItems = normalizedQuery
@@ -177,8 +190,8 @@ export function InventoryPage() {
         description="List of items and stock that will power daily operations."
       />
       <InventoryToolbar
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
+        searchQuery={searchInput}
+        onSearchChange={setSearchInput}
         bulkSelectedCount={bulkSelectedItemIds.length}
         onClearBulkSelection={handleClearBulkSelection}
       />

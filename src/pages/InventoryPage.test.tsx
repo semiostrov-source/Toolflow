@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import { render, screen, within, act, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { InventoryPage } from './InventoryPage'
@@ -12,6 +12,10 @@ function renderInventoryPage() {
     </MemoryRouter>,
   )
 }
+
+afterEach(() => {
+  vi.useRealTimers()
+})
 
 describe('InventoryPage', () => {
   it('renders the Inventory page header', () => {
@@ -176,9 +180,9 @@ describe('InventoryPage', () => {
     )
   })
 
-  it('filters items by name using the search input', async () => {
+  it('filters items by name using the search input with debounced search', async () => {
+    vi.useFakeTimers()
     renderInventoryPage()
-    const user = userEvent.setup()
 
     // All items are visible before searching
     expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
@@ -187,10 +191,19 @@ describe('InventoryPage', () => {
 
     const searchInput = screen.getByPlaceholderText('Search items')
 
-    await user.type(searchInput, 'card')
+    fireEvent.change(searchInput, { target: { value: 'card' } })
+
+    // Before the debounce delay elapses, all items are still visible
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Shipping Label')).toBeInTheDocument()
+    expect(screen.getByText('Packing Tape')).toBeInTheDocument()
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
 
     // Cardboard Box (name contains "card") remains visible
-    expect(await screen.findByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
 
     // Other items are filtered out
     expect(screen.queryByText('Shipping Label')).not.toBeInTheDocument()
@@ -203,15 +216,29 @@ describe('InventoryPage', () => {
   })
 
   it('filters items by SKU when searching', async () => {
+    vi.useFakeTimers()
     renderInventoryPage()
-    const user = userEvent.setup()
+
+    // All items are visible before searching
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Shipping Label')).toBeInTheDocument()
+    expect(screen.getByText('Packing Tape')).toBeInTheDocument()
 
     const searchInput = screen.getByPlaceholderText('Search items')
 
-    await user.type(searchInput, 'BOX')
+    fireEvent.change(searchInput, { target: { value: 'BOX' } })
+
+    // Before the debounce delay elapses, all items are still visible
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Shipping Label')).toBeInTheDocument()
+    expect(screen.getByText('Packing Tape')).toBeInTheDocument()
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
 
     // Matching SKU keeps Cardboard Box visible
-    expect(await screen.findByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
     expect(screen.getByText('BOX-001')).toBeInTheDocument()
 
     // Non-matching items are filtered out
@@ -220,25 +247,50 @@ describe('InventoryPage', () => {
   })
 
   it('matches SKU search case-insensitively', async () => {
+    vi.useFakeTimers()
     renderInventoryPage()
-    const user = userEvent.setup()
+
+    // All items are visible before searching
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Shipping Label')).toBeInTheDocument()
+    expect(screen.getByText('Packing Tape')).toBeInTheDocument()
 
     const searchInput = screen.getByPlaceholderText('Search items')
 
-    await user.type(searchInput, 'box-001')
+    fireEvent.change(searchInput, { target: { value: 'box-001' } })
+
+    // Before the debounce delay elapses, all items are still visible
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Shipping Label')).toBeInTheDocument()
+    expect(screen.getByText('Packing Tape')).toBeInTheDocument()
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
 
     // Even with different casing, the SKU still matches
-    expect(await screen.findByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
     expect(screen.getByText('BOX-001')).toBeInTheDocument()
   })
 
   it('shows the empty table state when no items match the search', async () => {
+    vi.useFakeTimers()
     renderInventoryPage()
-    const user = userEvent.setup()
 
     const searchInput = screen.getByPlaceholderText('Search items')
 
-    await user.type(searchInput, 'no-matching-item-query')
+    fireEvent.change(searchInput, {
+      target: { value: 'no-matching-item-query' },
+    })
+
+    // Before the debounce delay elapses, all items are still visible
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Shipping Label')).toBeInTheDocument()
+    expect(screen.getByText('Packing Tape')).toBeInTheDocument()
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
 
     // All item rows are gone
     expect(screen.queryByText('Cardboard Box')).not.toBeInTheDocument()
@@ -246,14 +298,13 @@ describe('InventoryPage', () => {
     expect(screen.queryByText('Packing Tape')).not.toBeInTheDocument()
 
     // InventoryTable reuses its existing empty-state message
-    expect(
-      await screen.findByText('No inventory items yet'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('No inventory items yet')).toBeInTheDocument()
   })
 
   it('clears the selected item when it is filtered out of the table', async () => {
+    vi.useFakeTimers()
+
     renderInventoryPage()
-    const user = userEvent.setup()
 
     // Select an item to populate the details panel
     const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
@@ -264,7 +315,7 @@ describe('InventoryPage', () => {
       { name: 'View' },
     )
 
-    await user.click(viewButton)
+    fireEvent.click(viewButton)
 
     // Sanity check: details panel shows the selected item
     expect(
@@ -276,15 +327,22 @@ describe('InventoryPage', () => {
 
     // Apply a search that removes the selected item from the table
     const searchInput = screen.getByPlaceholderText('Search items')
-    await user.clear(searchInput)
-    await user.type(searchInput, 'label')
+    fireEvent.change(searchInput, { target: { value: '' } })
+    fireEvent.change(searchInput, { target: { value: 'label' } })
+
+    // Before the debounce delay elapses, the selected item row is still present
+    expect(cardBoardRow).toBeInTheDocument()
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
 
     // The selected item row should no longer be present
     expect(screen.queryByText('Cardboard Box')).not.toBeInTheDocument()
 
     // The details panel returns to its empty state
     expect(
-      await screen.findByText('Select an inventory item to view details'),
+      screen.getByText('Select an inventory item to view details'),
     ).toBeInTheDocument()
 
     // No row remains selected
@@ -292,6 +350,25 @@ describe('InventoryPage', () => {
       '.inventory-table-row--selected',
     )
     expect(selectedRow).toBeNull()
+  })
+
+  it('does not apply filters before the debounce delay elapses', async () => {
+    vi.useFakeTimers()
+    renderInventoryPage()
+
+    const searchInput = screen.getByPlaceholderText('Search items')
+
+    fireEvent.change(searchInput, { target: { value: 'card' } })
+
+    // Advance time by less than the debounce delay
+    await act(async () => {
+      vi.advanceTimersByTime(150)
+    })
+
+    // All items are still visible because debounce has not completed
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Shipping Label')).toBeInTheDocument()
+    expect(screen.getByText('Packing Tape')).toBeInTheDocument()
   })
 
   it('sorts items by Name ascending and descending', async () => {
