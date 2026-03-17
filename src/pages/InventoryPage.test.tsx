@@ -1155,5 +1155,93 @@ describe('InventoryPage', () => {
       within(row).queryByTitle('Maintenance'),
     ).toBeNull()
   })
+
+  it('Escape key clears search and keeps focus on the search input', async () => {
+    vi.useFakeTimers()
+    renderInventoryPage()
+
+    // Open the details panel so we can verify stopPropagation() prevents it closing
+    const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
+    const viewButton = within(cardBoardRow as HTMLTableRowElement).getByRole(
+      'button',
+      { name: 'View' },
+    )
+    fireEvent.click(viewButton)
+    expect(
+      screen.getByRole('heading', { name: /Cardboard Box/i }),
+    ).toBeInTheDocument()
+
+    const searchInput = screen.getByPlaceholderText('Search items')
+
+    fireEvent.change(searchInput, { target: { value: 'card' } })
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
+
+    // Confirm the filter is active
+    expect(screen.queryByText('Shipping Label')).not.toBeInTheDocument()
+
+    // Ensure the input is focused before pressing Escape
+    searchInput.focus()
+    fireEvent.keyDown(searchInput, { key: 'Escape', code: 'Escape' })
+
+    // The search field must be cleared
+    expect(searchInput).toHaveValue('')
+    // The details panel must still be visible — proves stopPropagation() prevented
+    // the document-level Escape handler from closing the panel
+    expect(
+      screen.getByRole('heading', { name: /Cardboard Box/i }),
+    ).toBeInTheDocument()
+  })
+
+  it('toolbar clear button returns focus to the search input after clearing', async () => {
+    renderInventoryPage()
+
+    const searchInput = screen.getByPlaceholderText('Search items')
+
+    fireEvent.change(searchInput, { target: { value: 'card' } })
+
+    // Clear (×) button appears when the search query is non-empty
+    const clearButton = screen.getByRole('button', { name: 'Clear search' })
+    expect(clearButton).toBeInTheDocument()
+
+    fireEvent.click(clearButton)
+
+    expect(searchInput).toHaveValue('')
+    expect(document.activeElement).toBe(searchInput)
+  })
+
+  it('contextual clear search button returns focus to the search input', async () => {
+    vi.useFakeTimers()
+    renderInventoryPage()
+
+    const searchInput = screen.getByPlaceholderText('Search items')
+
+    fireEvent.change(searchInput, {
+      target: { value: 'no-matching-item-query' },
+    })
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
+
+    // Sanity check: table is in filtered-empty state
+    expect(screen.getByText('No inventory items yet')).toBeInTheDocument()
+
+    const emptyActions = document.querySelector(
+      '.inventory-table-empty-actions',
+    ) as HTMLElement
+    expect(emptyActions).not.toBeNull()
+
+    const clearSearchButton = within(emptyActions).getByRole('button', {
+      name: 'Clear search',
+    })
+
+    fireEvent.click(clearSearchButton)
+
+    expect(searchInput).toHaveValue('')
+    expect(document.activeElement).toBe(searchInput)
+  })
 })
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Item, ItemStatus } from '../features/inventory'
 import { PageHeader } from '../shared/ui'
 import {
@@ -11,6 +11,7 @@ import {
 } from '../features/inventory'
 
 export function InventoryPage() {
+  const searchInputRef = useRef<HTMLInputElement>(null)
   const [items, setItems] = useState<Item[]>(mockItems)
   const [selectedItem, setSelectedItem] = useState<Item | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -185,6 +186,7 @@ export function InventoryPage() {
 
   const handleClearSearch = () => {
     setSearchInput('')
+    searchInputRef.current?.focus()
   }
 
   const isFilteredEmpty = items.length > 0 && sortedItems.length === 0
@@ -196,6 +198,7 @@ export function InventoryPage() {
         description="List of items and stock that will power daily operations."
       />
       <InventoryToolbar
+        ref={searchInputRef}
         searchQuery={searchInput}
         onSearchChange={setSearchInput}
         bulkSelectedCount={bulkSelectedItemIds.length}
