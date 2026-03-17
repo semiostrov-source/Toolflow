@@ -96,6 +96,24 @@ describe('InventoryTable', () => {
     })
   })
 
+  it('header checkbox has an accessible name for select-all/clear-all', () => {
+    render(<InventoryTable />)
+
+    const headerCheckbox = screen.getByRole('checkbox', {
+      name: 'Select or clear all visible inventory rows',
+    })
+    expect(headerCheckbox).toBeInTheDocument()
+  })
+
+  it('row checkboxes have accessible names tied to the item', () => {
+    render(<InventoryTable />)
+
+    const rowCheckbox = screen.getByRole('checkbox', {
+      name: 'Select Cardboard Box',
+    })
+    expect(rowCheckbox).toBeInTheDocument()
+  })
+
   it('toggles bulk selection for a row when pressing Enter and Space on the focused row', async () => {
     const user = userEvent.setup()
     const onToggleBulkSelect = vi.fn()

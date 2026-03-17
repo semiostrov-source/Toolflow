@@ -417,7 +417,7 @@ describe('InventoryPage', () => {
     const user = userEvent.setup()
 
     const headerCheckbox = screen.getByRole('checkbox', {
-      name: 'Select all visible items',
+      name: 'Select or clear all visible inventory rows',
     })
 
     // Initially, no rows are selected and the header checkbox is unchecked
@@ -459,7 +459,7 @@ describe('InventoryPage', () => {
     const user = userEvent.setup()
 
     const headerCheckbox = screen.getByRole('checkbox', {
-      name: 'Select all visible items',
+      name: 'Select or clear all visible inventory rows',
     })
 
     await user.click(headerCheckbox)
@@ -508,7 +508,7 @@ describe('InventoryPage', () => {
     const user = userEvent.setup()
 
     const headerCheckbox = screen.getByRole('checkbox', {
-      name: 'Select all visible items',
+      name: 'Select or clear all visible inventory rows',
     })
 
     const firstItem = mockItems[0]
@@ -661,7 +661,7 @@ describe('InventoryPage', () => {
 
     // Bulk selection is cleared
     const headerCheckbox = screen.getByRole('checkbox', {
-      name: 'Select all visible items',
+      name: 'Select or clear all visible inventory rows',
     })
     expect(headerCheckbox).not.toBeChecked()
 

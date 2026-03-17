@@ -86,7 +86,7 @@ export function InventoryTable({
                   checked={!!allVisibleSelected && hasItems}
                   disabled={!hasItems}
                   onChange={() => onToggleSelectAllVisible?.()}
-                  aria-label="Select all visible items"
+                  aria-label="Select or clear all visible inventory rows"
                 />
               </th>
               <th scope="col">Name</th>
