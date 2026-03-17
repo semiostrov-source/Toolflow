@@ -1,4 +1,4 @@
-import type { Item } from '..'
+import type { Item } from '../types/domain'
 
 export const mockItems: Item[] = [
   {

@@ -8,3 +8,7 @@ export type {
   MovementType,
   ItemStatus,
 } from './types/domain';
+
+export { InventoryTable } from './components/InventoryTable';
+export { InventoryDetailsPanel } from './components/InventoryDetailsPanel';
+export { mockItems } from './mock/items';

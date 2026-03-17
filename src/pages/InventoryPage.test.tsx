@@ -3,7 +3,7 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { InventoryPage } from './InventoryPage'
-import { mockItems } from '../features/inventory/mock/items'
+import { mockItems } from '../features/inventory'
 
 function renderInventoryPage() {
   return render(

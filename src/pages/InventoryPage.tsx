@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react'
 import type { Item, ItemStatus } from '../features/inventory'
 import { PageHeader } from '../shared/ui'
-import { InventoryTable } from '../features/inventory/components/InventoryTable'
 import { InventoryToolbar } from '../features/inventory/components/InventoryToolbar'
 import { InventoryFilters } from '../features/inventory/components/InventoryFilters'
-import { InventoryDetailsPanel } from '../features/inventory/components/InventoryDetailsPanel'
 import { InventoryBulkActionsBar } from '../features/inventory/components/InventoryBulkActionsBar'
-import { mockItems } from '../features/inventory/mock/items'
+import { InventoryTable, InventoryDetailsPanel, mockItems } from '../features/inventory'
 
 export function InventoryPage() {
   const [items, setItems] = useState<Item[]>(mockItems)
