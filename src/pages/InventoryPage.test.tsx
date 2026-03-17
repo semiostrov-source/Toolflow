@@ -412,6 +412,64 @@ describe('InventoryPage', () => {
 
     // InventoryTable reuses its existing empty-state message
     expect(screen.getByText('No inventory items yet')).toBeInTheDocument()
+
+    // Contextual empty state shows a clear search action
+    const emptyActions = document.querySelector(
+      '.inventory-table-empty-actions',
+    ) as HTMLElement
+    expect(emptyActions).not.toBeNull()
+    expect(
+      within(emptyActions).getByRole('button', { name: 'Clear search' }),
+    ).toBeInTheDocument()
+  })
+
+  it('clears search from the contextual empty state and restores all items', async () => {
+    vi.useFakeTimers()
+    renderInventoryPage()
+
+    const searchInput = screen.getByPlaceholderText('Search items')
+
+    fireEvent.change(searchInput, {
+      target: { value: 'no-matching-item-query' },
+    })
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
+
+    // Sanity check: table is in filtered empty state
+    expect(screen.queryByText('Cardboard Box')).not.toBeInTheDocument()
+    expect(screen.queryByText('Shipping Label')).not.toBeInTheDocument()
+    expect(screen.queryByText('Packing Tape')).not.toBeInTheDocument()
+    expect(screen.getByText('No inventory items yet')).toBeInTheDocument()
+
+    const emptyActions = document.querySelector(
+      '.inventory-table-empty-actions',
+    ) as HTMLElement
+    expect(emptyActions).not.toBeNull()
+    const clearFiltersButton = within(emptyActions).getByRole('button', {
+      name: 'Clear search',
+    })
+
+    fireEvent.click(clearFiltersButton)
+
+    // Search input is cleared immediately
+    expect(searchInput).toHaveValue('')
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
+
+    // All items are visible again after debounce
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.getByText('Shipping Label')).toBeInTheDocument()
+    expect(screen.getByText('Packing Tape')).toBeInTheDocument()
+    expect(
+      screen.queryByText('No inventory items yet'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Clear search' }),
+    ).not.toBeInTheDocument()
   })
 
   it('clears the selected item when it is filtered out of the table', async () => {
@@ -600,6 +658,35 @@ describe('InventoryPage', () => {
     expect(selectedRow as HTMLElement).toHaveClass(
       'inventory-table-row--selected',
     )
+  })
+
+  it('shows the true empty state without a contextual reset action when there are no items at all', async () => {
+    vi.useFakeTimers()
+    vi.resetModules()
+
+    vi.doMock('../features/inventory', async () => {
+      const actual = await vi.importActual<typeof import('../features/inventory')>(
+        '../features/inventory',
+      )
+
+      return {
+        ...actual,
+        mockItems: [],
+      }
+    })
+
+    const { InventoryPage: EmptyInventoryPage } = await import('./InventoryPage')
+
+    render(
+      <MemoryRouter initialEntries={['/inventory']}>
+        <EmptyInventoryPage />
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByText('No inventory items yet')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Clear search' }),
+    ).not.toBeInTheDocument()
   })
 
   it('selects all visible rows via the header checkbox', async () => {

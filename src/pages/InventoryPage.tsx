@@ -183,6 +183,12 @@ export function InventoryPage() {
     }
   }, [filteredItems, selectedItem])
 
+  const handleClearSearch = () => {
+    setSearchInput('')
+  }
+
+  const isFilteredEmpty = items.length > 0 && sortedItems.length === 0
+
   return (
     <>
       <PageHeader
@@ -222,6 +228,17 @@ export function InventoryPage() {
               onToggleSelectAllVisible={handleToggleSelectAllVisible}
               onChangeItemStatus={handleChangeItemStatus}
             />
+            {isFilteredEmpty && (
+              <div className="inventory-table-empty-actions">
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  aria-label="Clear search"
+                >
+                  Clear search
+                </button>
+              </div>
+            )}
           </div>
           <div className="inventory-workspace-details">
             <InventoryDetailsPanel item={selectedItem} onClose={handleCloseDetails} />
