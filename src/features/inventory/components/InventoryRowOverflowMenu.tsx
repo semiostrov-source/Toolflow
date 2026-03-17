@@ -78,7 +78,7 @@ export function InventoryRowOverflowMenu({
           role="menuitem"
           onClick={handleItemClick}
         >
-          Open details
+          View item details
         </button>
         <button
           type="button"
@@ -94,7 +94,7 @@ export function InventoryRowOverflowMenu({
           role="menuitem"
           onClick={handleItemClick}
         >
-          View history
+          View item history
         </button>
       </div>
     </div>

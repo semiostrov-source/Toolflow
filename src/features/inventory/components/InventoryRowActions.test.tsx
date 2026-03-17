@@ -26,13 +26,13 @@ describe('InventoryRowActions', () => {
       screen.queryByRole('menu', { name: 'Inventory row actions' }),
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('menuitem', { name: 'Open details' }),
+      screen.queryByRole('menuitem', { name: 'View item details' }),
     ).not.toBeInTheDocument()
     expect(
       screen.queryByRole('menuitem', { name: 'Edit item' }),
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('menuitem', { name: 'View history' }),
+      screen.queryByRole('menuitem', { name: 'View item history' }),
     ).not.toBeInTheDocument()
 
     await user.click(moreButton)
@@ -41,13 +41,13 @@ describe('InventoryRowActions', () => {
       screen.getByRole('menu', { name: 'Inventory row actions' }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('menuitem', { name: 'Open details' }),
+      screen.getByRole('menuitem', { name: 'View item details' }),
     ).toBeInTheDocument()
     expect(
       screen.getByRole('menuitem', { name: 'Edit item' }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('menuitem', { name: 'View history' }),
+      screen.getByRole('menuitem', { name: 'View item history' }),
     ).toBeInTheDocument()
     expect(moreButton).toHaveAttribute('aria-expanded', 'true')
 
@@ -57,13 +57,13 @@ describe('InventoryRowActions', () => {
       screen.queryByRole('menu', { name: 'Inventory row actions' }),
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('menuitem', { name: 'Open details' }),
+      screen.queryByRole('menuitem', { name: 'View item details' }),
     ).not.toBeInTheDocument()
     expect(
       screen.queryByRole('menuitem', { name: 'Edit item' }),
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('menuitem', { name: 'View history' }),
+      screen.queryByRole('menuitem', { name: 'View item history' }),
     ).not.toBeInTheDocument()
     expect(moreButton).toHaveAttribute('aria-expanded', 'false')
   })
@@ -78,7 +78,7 @@ describe('InventoryRowActions', () => {
     await user.click(moreButton)
 
     const openDetailsItem = screen.getByRole('menuitem', {
-      name: 'Open details',
+      name: 'View item details',
     })
 
     await user.click(openDetailsItem)
@@ -109,13 +109,13 @@ describe('InventoryRowActions', () => {
       screen.queryByRole('menu', { name: 'Inventory row actions' }),
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('menuitem', { name: 'Open details' }),
+      screen.queryByRole('menuitem', { name: 'View item details' }),
     ).not.toBeInTheDocument()
     expect(
       screen.queryByRole('menuitem', { name: 'Edit item' }),
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('menuitem', { name: 'View history' }),
+      screen.queryByRole('menuitem', { name: 'View item history' }),
     ).not.toBeInTheDocument()
     expect(moreButton).toHaveAttribute('aria-expanded', 'false')
   })
@@ -140,13 +140,13 @@ describe('InventoryRowActions', () => {
       screen.queryByRole('menu', { name: 'Inventory row actions' }),
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('menuitem', { name: 'Open details' }),
+      screen.queryByRole('menuitem', { name: 'View item details' }),
     ).not.toBeInTheDocument()
     expect(
       screen.queryByRole('menuitem', { name: 'Edit item' }),
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('menuitem', { name: 'View history' }),
+      screen.queryByRole('menuitem', { name: 'View item history' }),
     ).not.toBeInTheDocument()
     expect(moreButton).toHaveAttribute('aria-expanded', 'false')
   })
@@ -163,7 +163,7 @@ describe('InventoryRowActions', () => {
 
     await user.click(moreButton)
 
-    const firstMenuItem = screen.getByRole('menuitem', { name: 'Open details' })
+    const firstMenuItem = screen.getByRole('menuitem', { name: 'View item details' })
     expect(firstMenuItem).toHaveFocus()
 
     await user.keyboard('{Escape}')
@@ -184,35 +184,35 @@ describe('InventoryRowActions', () => {
     await user.click(moreButton)
 
     const openDetailsItem = screen.getByRole('menuitem', {
-      name: 'Open details',
+      name: 'View item details',
     })
     const editItem = screen.getByRole('menuitem', {
       name: 'Edit item',
     })
     const viewHistoryItem = screen.getByRole('menuitem', {
-      name: 'View history',
+      name: 'View item history',
     })
 
     // First menu item should have focus initially (from focus-management behavior)
     expect(openDetailsItem).toHaveFocus()
 
-    // ArrowDown: Open details -> Edit item
+    // ArrowDown: View item details -> Edit item
     await user.keyboard('{ArrowDown}')
     expect(editItem).toHaveFocus()
 
-    // ArrowDown: Edit item -> View history
+    // ArrowDown: Edit item -> View item history
     await user.keyboard('{ArrowDown}')
     expect(viewHistoryItem).toHaveFocus()
 
-    // ArrowDown: View history -> wraps to Open details
+    // ArrowDown: View item history -> wraps to View item details
     await user.keyboard('{ArrowDown}')
     expect(openDetailsItem).toHaveFocus()
 
-    // ArrowUp: Open details -> wraps to View history
+    // ArrowUp: View item details -> wraps to View item history
     await user.keyboard('{ArrowUp}')
     expect(viewHistoryItem).toHaveFocus()
 
-    // ArrowUp: View history -> Edit item
+    // ArrowUp: View item history -> Edit item
     await user.keyboard('{ArrowUp}')
     expect(editItem).toHaveFocus()
   })
@@ -227,7 +227,7 @@ describe('InventoryRowActions', () => {
     await user.click(moreButton)
 
     const openDetailsItem = screen.getByRole('menuitem', {
-      name: 'Open details',
+      name: 'View item details',
     })
 
     expect(openDetailsItem).toHaveFocus()
