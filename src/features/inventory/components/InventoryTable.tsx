@@ -110,6 +110,23 @@ export function InventoryTable({
                       isSelected ? ' inventory-table-row--selected' : ''
                     }`}
                     tabIndex={0}
+                    onClick={(event) => {
+                      const target = event.target as HTMLElement | null
+
+                      if (!target) return
+
+                      if (
+                        target.closest('button') ||
+                        target.closest('a') ||
+                        target.closest('input') ||
+                        target.closest('[role="menu"]') ||
+                        target.closest('[role="menuitem"]')
+                      ) {
+                        return
+                      }
+
+                      onSelectItem?.(item)
+                    }}
                     onKeyDown={(event) => {
                       if (event.currentTarget !== event.target) return
 

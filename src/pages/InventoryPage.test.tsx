@@ -180,6 +180,46 @@ describe('InventoryPage', () => {
     )
   })
 
+  it('shows item details when a row is clicked', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
+    expect(cardBoardRow).not.toBeNull()
+
+    await user.click(cardBoardRow as HTMLTableRowElement)
+
+    expect(
+      screen.queryByText('Select an inventory item to view details'),
+    ).not.toBeInTheDocument()
+
+    expect(
+      screen.getByRole('heading', { name: /Cardboard Box/ }),
+    ).toBeInTheDocument()
+  })
+
+  it('does not open item details when the row checkbox is clicked', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    expect(
+      screen.getByText('Select an inventory item to view details'),
+    ).toBeInTheDocument()
+
+    const checkbox = screen.getByRole('checkbox', {
+      name: 'Select Cardboard Box',
+    })
+
+    await user.click(checkbox)
+
+    expect(
+      screen.getByText('Select an inventory item to view details'),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: /Cardboard Box/ }),
+    ).not.toBeInTheDocument()
+  })
+
   it('filters items by name using the search input with debounced search', async () => {
     vi.useFakeTimers()
     renderInventoryPage()
