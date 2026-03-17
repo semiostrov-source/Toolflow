@@ -12,3 +12,6 @@ export type {
 export { InventoryTable } from './components/InventoryTable';
 export { InventoryDetailsPanel } from './components/InventoryDetailsPanel';
 export { mockItems } from './mock/items';
+export { InventoryToolbar } from './components/InventoryToolbar';
+export { InventoryFilters } from './components/InventoryFilters';
+export { InventoryBulkActionsBar } from './components/InventoryBulkActionsBar';
