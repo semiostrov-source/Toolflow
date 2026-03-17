@@ -1,12 +1,14 @@
 import type { Ref } from 'react'
 
 interface InventoryRowOverflowMenuProps {
+  id?: string
   isOpen: boolean
   onClose?: () => void
   firstItemRef?: Ref<HTMLButtonElement>
 }
 
 export function InventoryRowOverflowMenu({
+  id: menuId,
   isOpen,
   onClose,
   firstItemRef,
@@ -22,6 +24,7 @@ export function InventoryRowOverflowMenu({
   return (
     <div className="inventory-row-overflow-menu">
       <div
+        id={menuId}
         tabIndex={-1}
         className="inventory-row-overflow-menu-panel"
         role="menu"

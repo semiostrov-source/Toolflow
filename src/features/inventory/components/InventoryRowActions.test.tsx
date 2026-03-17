@@ -12,6 +12,7 @@ describe('InventoryRowActions', () => {
     expect(moreButton).toBeInTheDocument()
     expect(moreButton).toHaveAttribute('aria-haspopup', 'menu')
     expect(moreButton).toHaveAttribute('aria-expanded', 'false')
+    expect(moreButton).not.toHaveAttribute('aria-controls')
   })
 
   it('toggles the overflow menu and menu items when clicking More', async () => {
@@ -237,6 +238,23 @@ describe('InventoryRowActions', () => {
       screen.queryByRole('menu', { name: 'Inventory row actions' }),
     ).not.toBeInTheDocument()
     expect(moreButton).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it('links More button to menu via aria-controls when menu is open', async () => {
+    const user = userEvent.setup()
+
+    render(<InventoryRowActions />)
+
+    const moreButton = screen.getByRole('button', { name: 'More' })
+
+    await user.click(moreButton)
+
+    const menu = screen.getByRole('menu', { name: 'Inventory row actions' })
+    const menuId = menu.id
+
+    expect(menuId).toBeTruthy()
+    expect(moreButton).toHaveAttribute('aria-expanded', 'true')
+    expect(moreButton).toHaveAttribute('aria-controls', menuId)
   })
 })
 

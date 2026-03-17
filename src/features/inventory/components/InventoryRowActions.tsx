@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { InventoryRowOverflowMenu } from './InventoryRowOverflowMenu'
 
 interface InventoryRowActionsProps {
@@ -13,6 +13,7 @@ export function InventoryRowActions({
   onMore,
 }: InventoryRowActionsProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const menuId = useId()
 
   const actionsRef = useRef<HTMLDivElement | null>(null)
   const moreButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -88,11 +89,13 @@ export function InventoryRowActions({
         className="inventory-table-action-button"
         aria-haspopup="menu"
         aria-expanded={isMenuOpen}
+        aria-controls={isMenuOpen ? menuId : undefined}
         onClick={handleMoreClick}
       >
         More
       </button>
       <InventoryRowOverflowMenu
+        id={menuId}
         isOpen={isMenuOpen}
         onClose={handleMenuClose}
         firstItemRef={firstMenuItemRef}
