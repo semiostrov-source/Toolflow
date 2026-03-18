@@ -25,9 +25,11 @@ const _itemWithoutStatusIsInvalid: Item = {
   unit: 'pcs',
   createdAt: '2025-01-01T00:00:00.000Z',
 }
+void _itemWithoutStatusIsInvalid
 
 // @ts-expect-error status must be a valid ItemStatus literal
 const _invalidStatus: ItemStatus = 'invalid'
+void _invalidStatus
 
 describe('inventory domain', () => {
   it('provides a finite set of allowed item statuses', () => {

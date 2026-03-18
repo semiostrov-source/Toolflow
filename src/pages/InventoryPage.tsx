@@ -8,6 +8,11 @@ import {
   InventoryTable,
   InventoryDetailsPanel,
   mockItems,
+  changeItemStatus,
+  bulkChangeStatus,
+  syncSelectedItem,
+  type ChangeItemStatusCommand,
+  type BulkChangeStatusCommand,
 } from '../features/inventory'
 
 interface InventoryPageProps {
@@ -124,23 +129,13 @@ export function InventoryPage({ initialItems }: InventoryPageProps = {}) {
   const handleApplyBulkStatusChange = () => {
     if (!bulkStatus) return
 
-    setItems((previousItems) =>
-      previousItems.map((item) =>
-        bulkSelectedItemIds.includes(item.id)
-          ? { ...item, status: bulkStatus }
-          : item,
-      ),
-    )
-
-    setSelectedItem((previousSelected) => {
-      if (!previousSelected) return previousSelected
-      if (!bulkSelectedItemIds.includes(previousSelected.id)) {
-        return previousSelected
-      }
-
-      return { ...previousSelected, status: bulkStatus }
-    })
-
+    const command: BulkChangeStatusCommand = {
+      type: 'bulkChangeStatus',
+      itemIds: [...bulkSelectedItemIds],
+      newStatus: bulkStatus,
+    }
+    setItems(prev => bulkChangeStatus(prev, command))
+    setSelectedItem(prev => syncSelectedItem(prev, command))
     setBulkSelectedItemIds([])
     setBulkStatus('')
   }
@@ -182,19 +177,14 @@ export function InventoryPage({ initialItems }: InventoryPageProps = {}) {
     }
   }, [selectedItem])
 
-  const handleChangeItemStatus = (itemId: string, status: ItemStatus) => {
-    setItems((previousItems) =>
-      previousItems.map((item) =>
-        item.id === itemId ? { ...item, status } : item,
-      ),
-    )
-
-    setSelectedItem((previousSelected) => {
-      if (!previousSelected) return previousSelected
-      if (previousSelected.id !== itemId) return previousSelected
-
-      return { ...previousSelected, status }
-    })
+  const handleChangeItemStatus = (itemId: string, newStatus: ItemStatus) => {
+    const command: ChangeItemStatusCommand = {
+      type: 'changeItemStatus',
+      itemId,
+      newStatus,
+    }
+    setItems(prev => changeItemStatus(prev, command))
+    setSelectedItem(prev => syncSelectedItem(prev, command))
   }
 
   useEffect(() => {
@@ -205,12 +195,14 @@ export function InventoryPage({ initialItems }: InventoryPageProps = {}) {
     )
 
     if (!stillVisible) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedItem(null)
     }
   }, [filteredItems, selectedItem])
 
   useEffect(() => {
     const filteredIds = new Set(filteredItems.map((item) => item.id))
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setBulkSelectedItemIds((prev) => {
       const next = prev.filter((id) => filteredIds.has(id))
       return next.length === prev.length ? prev : next
