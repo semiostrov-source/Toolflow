@@ -1278,6 +1278,99 @@ describe('InventoryPage', () => {
     ).toBeInTheDocument()
   })
 
+  it('deselects items hidden by search filter', async () => {
+    vi.useFakeTimers()
+    renderInventoryPage()
+
+    const headerCheckbox = screen.getByRole('checkbox', {
+      name: 'Select or clear all visible inventory rows',
+    })
+
+    // Select all visible items via the header checkbox
+    fireEvent.click(headerCheckbox)
+
+    const toolbarBulkSelection = document.querySelector(
+      '.inventory-toolbar-bulk-selection',
+    ) as HTMLElement | null
+    expect(toolbarBulkSelection).not.toBeNull()
+    expect(
+      within(toolbarBulkSelection as HTMLElement).getByText(
+        `${mockItems.length} items selected`,
+      ),
+    ).toBeInTheDocument()
+
+    // Apply a search that leaves only "Cardboard Box" visible
+    const searchInput = screen.getByPlaceholderText('Search items')
+    fireEvent.change(searchInput, { target: { value: 'card' } })
+
+    await act(async () => {
+      vi.advanceTimersByTime(300)
+    })
+
+    expect(screen.getByText('Cardboard Box')).toBeInTheDocument()
+    expect(screen.queryByText('Shipping Label')).not.toBeInTheDocument()
+    expect(screen.queryByText('Packing Tape')).not.toBeInTheDocument()
+
+    // Bulk selection count is pruned to only the one still-visible item
+    const updatedBulkSelection = document.querySelector(
+      '.inventory-toolbar-bulk-selection',
+    ) as HTMLElement | null
+    expect(updatedBulkSelection).not.toBeNull()
+    expect(
+      within(updatedBulkSelection as HTMLElement).getByText('1 item selected'),
+    ).toBeInTheDocument()
+  })
+
+  it('preserves bulk selection after sorting changes', () => {
+    renderInventoryPage()
+
+    const cardboardCheckbox = screen.getByRole('checkbox', {
+      name: 'Select Cardboard Box',
+    })
+    const shippingLabelCheckbox = screen.getByRole('checkbox', {
+      name: 'Select Shipping Label',
+    })
+
+    fireEvent.click(cardboardCheckbox)
+    fireEvent.click(shippingLabelCheckbox)
+
+    expect(cardboardCheckbox).toBeChecked()
+    expect(shippingLabelCheckbox).toBeChecked()
+
+    const toolbarBulkSelection = document.querySelector(
+      '.inventory-toolbar-bulk-selection',
+    ) as HTMLElement | null
+    expect(toolbarBulkSelection).not.toBeNull()
+    expect(
+      within(toolbarBulkSelection as HTMLElement).getByText('2 items selected'),
+    ).toBeInTheDocument()
+
+    // Change the sort field and direction
+    const sortFieldSelect = screen.getByLabelText('Sort by')
+    const sortDirectionSelect = screen.getByLabelText('Direction')
+
+    fireEvent.change(sortFieldSelect, { target: { value: 'name' } })
+    fireEvent.change(sortDirectionSelect, { target: { value: 'desc' } })
+
+    // Row order changed — verify the sort took effect
+    const table = screen.getByRole('table')
+    const rows = within(table).getAllByRole('row').slice(1)
+    const firstRowName = rows[0].querySelector('td:nth-of-type(2)')?.textContent?.trim()
+    expect(firstRowName).not.toBe('Cardboard Box')
+
+    // Both checkboxes must still be checked after the sort
+    expect(cardboardCheckbox).toBeChecked()
+    expect(shippingLabelCheckbox).toBeChecked()
+
+    const updatedBulkSelection = document.querySelector(
+      '.inventory-toolbar-bulk-selection',
+    ) as HTMLElement | null
+    expect(updatedBulkSelection).not.toBeNull()
+    expect(
+      within(updatedBulkSelection as HTMLElement).getByText('2 items selected'),
+    ).toBeInTheDocument()
+  })
+
   it('shows result count when search is active', async () => {
     vi.useFakeTimers()
     renderInventoryPage()

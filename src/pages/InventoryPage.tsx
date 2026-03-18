@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Item, ItemStatus } from '../features/inventory'
 import { PageHeader } from '../shared/ui'
 import {
@@ -33,18 +33,20 @@ export function InventoryPage() {
     }
   }, [searchInput])
 
-  const normalizedQuery = searchQuery.trim().toLowerCase()
-  const filteredItems = normalizedQuery
-    ? items.filter((item) => {
-        const name = item.name.toLowerCase()
-        const sku = item.sku.toLowerCase()
+  const filteredItems = useMemo(() => {
+    const normalizedQuery = searchQuery.trim().toLowerCase()
+    return normalizedQuery
+      ? items.filter((item) => {
+          const name = item.name.toLowerCase()
+          const sku = item.sku.toLowerCase()
 
-        return (
-          name.includes(normalizedQuery) ||
-          sku.includes(normalizedQuery)
-        )
-      })
-    : items
+          return (
+            name.includes(normalizedQuery) ||
+            sku.includes(normalizedQuery)
+          )
+        })
+      : items
+  }, [items, searchQuery])
 
   const sortedItems = [...filteredItems].sort((a, b) => {
     let compareValue = 0
@@ -183,6 +185,14 @@ export function InventoryPage() {
       setSelectedItem(null)
     }
   }, [filteredItems, selectedItem])
+
+  useEffect(() => {
+    const filteredIds = new Set(filteredItems.map((item) => item.id))
+    setBulkSelectedItemIds((prev) => {
+      const next = prev.filter((id) => filteredIds.has(id))
+      return next.length === prev.length ? prev : next
+    })
+  }, [filteredItems])
 
   const handleClearSearch = () => {
     setSearchInput('')

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { InventoryTable } from './InventoryTable'
 
@@ -114,7 +114,30 @@ describe('InventoryTable', () => {
     expect(rowCheckbox).toBeInTheDocument()
   })
 
-  it('toggles bulk selection for a row when pressing Enter and Space on the focused row', async () => {
+  it('calls onSelectItem when pressing Enter on the focused row', async () => {
+    const user = userEvent.setup()
+    const onSelectItem = vi.fn()
+
+    render(<InventoryTable onSelectItem={onSelectItem} />)
+
+    const table = screen.getByRole('table')
+    const rows = within(table).getAllByRole('row').slice(1)
+    const cardboardRow = rows.find((row) =>
+      within(row).queryByText('Cardboard Box'),
+    ) as HTMLTableRowElement | undefined
+
+    expect(cardboardRow).toBeDefined()
+
+    cardboardRow!.focus()
+    expect(cardboardRow).toHaveFocus()
+
+    await user.keyboard('{Enter}')
+
+    expect(onSelectItem).toHaveBeenCalledTimes(1)
+    expect(onSelectItem).toHaveBeenCalledWith(expect.objectContaining({ id: 'item-1' }))
+  })
+
+  it('calls onToggleBulkSelect when pressing Space on the focused row', async () => {
     const user = userEvent.setup()
     const onToggleBulkSelect = vi.fn()
 
@@ -131,20 +154,10 @@ describe('InventoryTable', () => {
     cardboardRow!.focus()
     expect(cardboardRow).toHaveFocus()
 
-    // Press Enter on the focused row and assert a single toggle
-    await user.keyboard('{Enter}')
+    await user.keyboard(' ')
+
     expect(onToggleBulkSelect).toHaveBeenCalledTimes(1)
-    expect(onToggleBulkSelect).toHaveBeenNthCalledWith(1, 'item-1')
-
-    // Ensure the row is still focused before pressing Space
-    cardboardRow!.focus()
-    expect(cardboardRow).toHaveFocus()
-
-    // Press Space on the focused row using fireEvent
-    fireEvent.keyDown(cardboardRow!, { key: ' ', code: 'Space' })
-
-    expect(onToggleBulkSelect).toHaveBeenCalledTimes(2)
-    expect(onToggleBulkSelect).toHaveBeenNthCalledWith(2, 'item-1')
+    expect(onToggleBulkSelect).toHaveBeenCalledWith('item-1')
   })
 })
 

@@ -135,7 +135,7 @@ export function InventoryTable({
                       if (event.currentTarget !== event.target) return
 
                       if (event.key === 'Enter') {
-                        onToggleBulkSelect?.(item.id)
+                        onSelectItem?.(item)
                         return
                       }
 
