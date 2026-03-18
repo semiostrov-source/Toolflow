@@ -6,7 +6,7 @@ import { Sidebar } from './Sidebar'
 describe('Sidebar', () => {
   it('renders all four nav links', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Sidebar />
       </MemoryRouter>,
     )
@@ -18,7 +18,7 @@ describe('Sidebar', () => {
 
   it('marks Dashboard link as active at /', () => {
     render(
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={['/']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Sidebar />
       </MemoryRouter>,
     )
@@ -28,7 +28,7 @@ describe('Sidebar', () => {
 
   it('marks Inventory link as active at /inventory', () => {
     render(
-      <MemoryRouter initialEntries={['/inventory']}>
+      <MemoryRouter initialEntries={['/inventory']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Sidebar />
       </MemoryRouter>,
     )
@@ -38,7 +38,7 @@ describe('Sidebar', () => {
 
   it('marks Warehouses link as active at /warehouses', () => {
     render(
-      <MemoryRouter initialEntries={['/warehouses']}>
+      <MemoryRouter initialEntries={['/warehouses']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Sidebar />
       </MemoryRouter>,
     )
@@ -48,7 +48,7 @@ describe('Sidebar', () => {
 
   it('marks Requests link as active at /requests', () => {
     render(
-      <MemoryRouter initialEntries={['/requests']}>
+      <MemoryRouter initialEntries={['/requests']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Sidebar />
       </MemoryRouter>,
     )
@@ -58,7 +58,7 @@ describe('Sidebar', () => {
 
   it('has sidebar landmark with aria-label', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Sidebar />
       </MemoryRouter>,
     )

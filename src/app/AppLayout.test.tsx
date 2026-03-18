@@ -10,7 +10,7 @@ function OutletContent() {
 describe('AppLayout', () => {
   it('renders Header and Sidebar', () => {
     render(
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={['/']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/" element={<AppLayout />}>
             <Route index element={<OutletContent />} />
@@ -27,7 +27,7 @@ describe('AppLayout', () => {
 
   it('renders main area with Outlet content', () => {
     render(
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={['/']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/" element={<AppLayout />}>
             <Route index element={<OutletContent />} />
@@ -40,7 +40,7 @@ describe('AppLayout', () => {
 
   it('has app layout structure', () => {
     const { container } = render(
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={['/']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/" element={<AppLayout />}>
             <Route index element={<OutletContent />} />

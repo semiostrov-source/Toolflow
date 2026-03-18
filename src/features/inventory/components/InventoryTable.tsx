@@ -60,16 +60,17 @@ export function InventoryTable({
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
+      event.stopImmediatePropagation()
       setEditingItemId(null)
       setEditingStatus(null)
     }
 
     document.addEventListener('mousedown', handleDocumentMouseDown)
-    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('keydown', handleKeyDown, { capture: true })
 
     return () => {
       document.removeEventListener('mousedown', handleDocumentMouseDown)
-      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('keydown', handleKeyDown, { capture: true })
     }
   }, [editingItemId])
 
@@ -110,6 +111,7 @@ export function InventoryTable({
                 return (
                   <tr
                     key={item.id}
+                    data-row-id={item.id}
                     className={`inventory-table-row${
                       isSelected ? ' inventory-table-row--selected' : ''
                     }`}
@@ -162,6 +164,7 @@ export function InventoryTable({
                           className="inventory-table-status-editor"
                         >
                           <select
+                            autoFocus
                             className="inventory-table-status-select"
                             value={editingStatus ?? item.status}
                             onChange={(event) => {

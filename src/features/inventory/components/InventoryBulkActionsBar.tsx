@@ -44,10 +44,10 @@ export function InventoryBulkActionsBar({
               }
             >
               <option value="">Select status</option>
-              <option value="available">available</option>
-              <option value="in_use">in_use</option>
-              <option value="maintenance">maintenance</option>
-              <option value="written_off">written_off</option>
+              <option value="available">Available</option>
+              <option value="in_use">In use</option>
+              <option value="maintenance">Maintenance</option>
+              <option value="written_off">Written off</option>
             </select>
             <button
               type="button"
@@ -71,7 +71,7 @@ export function InventoryBulkActionsBar({
             className="inventory-table-action-button"
             onClick={onClearSelection}
           >
-            Clear
+            Clear selection
           </button>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { App } from './App'
 describe('App', () => {
   it('renders brand and main navigation', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <App />
       </MemoryRouter>,
     )
@@ -19,7 +19,7 @@ describe('App', () => {
 
   it('renders dashboard content at /', () => {
     render(
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={['/']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <App />
       </MemoryRouter>,
     )

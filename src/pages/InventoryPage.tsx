@@ -10,9 +10,15 @@ import {
   mockItems,
 } from '../features/inventory'
 
-export function InventoryPage() {
+interface InventoryPageProps {
+  initialItems?: Item[]
+}
+
+export function InventoryPage({ initialItems }: InventoryPageProps = {}) {
   const searchInputRef = useRef<HTMLInputElement>(null)
-  const [items, setItems] = useState<Item[]>(mockItems)
+  const lastSelectedRowIdRef = useRef<string | null>(null)
+  const focusRafRef = useRef<number | null>(null)
+  const [items, setItems] = useState<Item[]>(initialItems ?? mockItems)
   const [selectedItem, setSelectedItem] = useState<Item | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchInput, setSearchInput] = useState('')
@@ -139,9 +145,26 @@ export function InventoryPage() {
     setBulkStatus('')
   }
 
+  const handleSelectItem = (item: Item) => {
+    lastSelectedRowIdRef.current = item.id
+    setSelectedItem(item)
+  }
+
   const handleCloseDetails = () => {
     setSelectedItem(null)
+    focusRafRef.current = requestAnimationFrame(() => {
+      const row = document.querySelector<HTMLElement>(
+        `[data-row-id="${lastSelectedRowIdRef.current}"]`,
+      )
+      row?.focus()
+    })
   }
+
+  useEffect(() => {
+    return () => {
+      if (focusRafRef.current !== null) cancelAnimationFrame(focusRafRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     if (!selectedItem) return
@@ -238,7 +261,7 @@ export function InventoryPage() {
             <InventoryTable
               items={sortedItems}
               selectedItemId={selectedItem?.id}
-              onSelectItem={setSelectedItem}
+              onSelectItem={handleSelectItem}
               bulkSelectedItemIds={bulkSelectedItemIds}
               onToggleBulkSelect={handleToggleBulkSelect}
               allVisibleSelected={allVisibleSelected}

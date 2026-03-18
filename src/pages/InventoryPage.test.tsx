@@ -7,7 +7,7 @@ import { mockItems } from '../features/inventory'
 
 function renderInventoryPage() {
   return render(
-    <MemoryRouter initialEntries={['/inventory']}>
+    <MemoryRouter initialEntries={['/inventory']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <InventoryPage />
     </MemoryRouter>,
   )
@@ -119,6 +119,39 @@ describe('InventoryPage', () => {
     expect(
       screen.getByText('Select an inventory item to view details'),
     ).toBeInTheDocument()
+  })
+
+  it('returns focus to the row after closing the details panel', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
+    expect(cardBoardRow).not.toBeNull()
+
+    const viewButton = within(cardBoardRow as HTMLTableRowElement).getByRole(
+      'button',
+      { name: 'View' },
+    )
+
+    await user.click(viewButton)
+
+    expect(
+      screen.getByRole('heading', { name: /Cardboard Box/i }),
+    ).toBeInTheDocument()
+
+    const closeButton = screen.getByRole('button', {
+      name: 'Close details panel',
+    })
+
+    await user.click(closeButton)
+
+    await act(async () => {
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+    })
+
+    const expectedId = (cardBoardRow as HTMLElement).getAttribute('data-row-id')
+    const row = document.querySelector(`[data-row-id="${expectedId}"]`)
+    expect(document.activeElement).toBe(row)
   })
 
   it('shows item details and highlights the selected row when View is clicked', async () => {
@@ -660,26 +693,10 @@ describe('InventoryPage', () => {
     )
   })
 
-  it('shows the true empty state without a contextual reset action when there are no items at all', async () => {
-    vi.useFakeTimers()
-    vi.resetModules()
-
-    vi.doMock('../features/inventory', async () => {
-      const actual = await vi.importActual<typeof import('../features/inventory')>(
-        '../features/inventory',
-      )
-
-      return {
-        ...actual,
-        mockItems: [],
-      }
-    })
-
-    const { InventoryPage: EmptyInventoryPage } = await import('./InventoryPage')
-
+  it('shows the true empty state without a contextual reset action when there are no items at all', () => {
     render(
-      <MemoryRouter initialEntries={['/inventory']}>
-        <EmptyInventoryPage />
+      <MemoryRouter initialEntries={['/inventory']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <InventoryPage initialItems={[]} />
       </MemoryRouter>,
     )
 
@@ -858,9 +875,10 @@ describe('InventoryPage', () => {
       within(toolbarBulkSelection as HTMLElement).getByText('2 items selected'),
     ).toBeInTheDocument()
 
-    const clearButton = screen.getByRole('button', {
-      name: 'Clear selection',
-    })
+    const clearButton = within(toolbarBulkSelection as HTMLElement).getByRole(
+      'button',
+      { name: 'Clear selection' },
+    )
 
     await user.click(clearButton)
 
@@ -1048,6 +1066,7 @@ describe('InventoryPage', () => {
     expect(
       within(row).queryByTitle('Available'),
     ).not.toBeInTheDocument()
+    expect(statusSelect).toHaveFocus()
   })
 
   it('updates the status badge when a new status is selected inline', async () => {
@@ -1154,6 +1173,52 @@ describe('InventoryPage', () => {
     expect(
       within(row).queryByTitle('Maintenance'),
     ).toBeNull()
+  })
+
+  it('closes inline status editor without closing details panel when Escape is pressed', async () => {
+    renderInventoryPage()
+    const user = userEvent.setup()
+
+    // Open the details panel
+    const cardBoardRow = screen.getByText('Cardboard Box').closest('tr')
+    expect(cardBoardRow).not.toBeNull()
+
+    const row = cardBoardRow as HTMLTableRowElement
+
+    const viewButton = within(row).getByRole('button', { name: 'View' })
+    await user.click(viewButton)
+
+    expect(
+      screen.getByRole('heading', { name: /Cardboard Box/i }),
+    ).toBeInTheDocument()
+
+    // Open the inline status editor
+    const statusButton = row.querySelector(
+      'button.inventory-table-status-button',
+    ) as HTMLButtonElement | null
+    expect(statusButton).not.toBeNull()
+
+    await user.click(statusButton as HTMLButtonElement)
+
+    const statusSelect = row.querySelector(
+      'select.inventory-table-status-select',
+    ) as HTMLSelectElement | null
+    expect(statusSelect).not.toBeNull()
+
+    // Focus the select then press Escape
+    await user.click(statusSelect as HTMLSelectElement)
+    await user.keyboard('{Escape}')
+
+    // Inline editor is closed
+    expect(
+      row.querySelector('select.inventory-table-status-select'),
+    ).toBeNull()
+
+    // Details panel is still open — capture-phase handler prevented the event
+    // from reaching the document-level panel-close listener
+    expect(
+      screen.getByRole('heading', { name: /Cardboard Box/i }),
+    ).toBeInTheDocument()
   })
 
   it('Escape key clears search and keeps focus on the search input', async () => {

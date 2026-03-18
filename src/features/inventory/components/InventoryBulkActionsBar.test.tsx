@@ -33,7 +33,7 @@ describe('InventoryBulkActionsBar', () => {
 
     const moveButton = screen.getByRole('button', { name: 'Move' })
     const writeOffButton = screen.getByRole('button', { name: 'Write off' })
-    const clearButton = screen.getByRole('button', { name: 'Clear' })
+    const clearButton = screen.getByRole('button', { name: 'Clear selection' })
 
     expect(moveButton).toBeInTheDocument()
     expect(moveButton).toBeDisabled()
@@ -80,7 +80,7 @@ describe('InventoryBulkActionsBar', () => {
     expect(applyButton).toBeDisabled()
   })
 
-  it('calls onClearSelection when Clear is clicked', async () => {
+  it('calls onClearSelection when "Clear selection" is clicked', async () => {
     const user = userEvent.setup()
     const onClearSelection = vi.fn()
 
@@ -94,7 +94,7 @@ describe('InventoryBulkActionsBar', () => {
       />,
     )
 
-    const clearButton = screen.getByRole('button', { name: 'Clear' })
+    const clearButton = screen.getByRole('button', { name: 'Clear selection' })
 
     await user.click(clearButton)
 
