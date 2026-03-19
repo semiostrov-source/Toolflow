@@ -43,8 +43,30 @@ The project was initialized using **Vite**.
 
 ------------------------------------------------------------------------
 
+# Current Status
+
+-   Frontend MVP: complete — all inventory interactions working
+-   Phase 1 complete: product definition, architecture, and conventions
+    established
+-   Phase 2 in progress: Inventory Actions Architecture implemented
+    (Batch 1 done)
+-   Application layer added to inventory feature
+-   No backend integration yet
+
+------------------------------------------------------------------------
+
+# Architecture Overview
+
+-   Feature-based structure: `src/features/`, `src/pages/`, `src/shared/`
+-   Inventory feature contains UI components and a typed application layer
+-   Pages delegate all state mutations to pure use-case functions
+-   No backend, no global state manager
+
+------------------------------------------------------------------------
+
 # Project Structure
 
+```
 ToolFlow
 ├ .cursor
 │ ├ agents
@@ -59,52 +81,90 @@ ToolFlow
 │ │ └ UI_PRINCIPLES.md
 │ │
 │ └ develop
-│ ├ api
-│ ├ architecture
-│ ├ audits
-│ ├ components
-│ ├ features
-│ ├ issues
-│ ├ plans
-│ ├ reports
-│ ├ MVP.md
-│ ├ PRODUCT.md
-│ └ ROADMAP.md
+│   ├ api
+│   ├ architecture
+│   ├ audits
+│   ├ components
+│   ├ features
+│   ├ issues
+│   ├ plans
+│   ├ reports
+│   ├ MVP.md
+│   ├ PRODUCT.md
+│   └ ROADMAP.md
 │
 ├ public
 ├ src
+│ ├ features
+│ │ └ inventory
+│ │   ├ application
+│ │   ├ components
+│ │   ├ mock
+│ │   └ types
+│ ├ pages
+│ │ └ InventoryPage.tsx
+│ └ shared
+│   └ ui
 │
 ├ index.html
 ├ package.json
 ├ tsconfig.json
 ├ vite.config.ts
 └ README.md
+```
 
 ------------------------------------------------------------------------
 
-# Documentation (Source of Truth)
+# Inventory Feature Snapshot
 
-Project documentation is stored in:
+Implemented in Phase 2 — Batch 1:
 
-ai_docs/
+**Typed commands** (`src/features/inventory/application/commands.ts`):
 
-Main documentation files:
+-   `ChangeItemStatusCommand` — change status of a single item
+-   `BulkChangeStatusCommand` — change status of multiple items at once
+-   `InventoryCommand` — union type of all inventory commands
 
--   ai_docs/develop/PRODUCT.md
--   ai_docs/develop/MVP.md
--   ai_docs/develop/ROADMAP.md
--   ai_docs/design/UI_PRINCIPLES.md
+**Pure use-case functions** (`src/features/inventory/application/`):
 
-Additional development documentation may appear in:
+-   `changeItemStatus` — applies a `ChangeItemStatusCommand` to the item
+    list
+-   `bulkChangeStatus` — applies a `BulkChangeStatusCommand` to the item
+    list
+-   `syncSelectedItem` — keeps the selected item in sync after state
+    changes
 
--   ai_docs/develop/plans
--   ai_docs/develop/reports
--   ai_docs/develop/issues
--   ai_docs/develop/architecture
--   ai_docs/develop/features
--   ai_docs/develop/api
--   ai_docs/develop/components
--   ai_docs/develop/audits
+`InventoryPage` imports these functions and delegates all state mutations
+to them.
+
+------------------------------------------------------------------------
+
+# Documentation & Source of Truth
+
+Project documentation is stored in `ai_docs/`. `ai_docs/` is the written
+source of truth for all product, architecture, and development decisions.
+Code is the final authority on implementation details.
+
+Main files:
+
+-   `ai_docs/develop/PRODUCT.md` — what ToolFlow is, who uses it, domain
+    entities, permission model
+-   `ai_docs/develop/MVP.md` — what the MVP delivers, scope, exclusions,
+    success criteria
+-   `ai_docs/develop/ROADMAP.md` — phases, batches, what is complete
+-   `ai_docs/design/UI_PRINCIPLES.md` — visual and interaction design
+    rules
+
+Additional documentation:
+
+-   `ai_docs/develop/plans/` — per-batch implementation plans
+-   `ai_docs/develop/reports/` — per-batch completion reports
+-   `ai_docs/develop/issues/` — tracked issues and known problems
+-   `ai_docs/develop/architecture/` — architecture decisions and notes
+-   `ai_docs/develop/features/` — per-feature documentation
+-   `ai_docs/develop/api/` — API contracts and definitions
+-   `ai_docs/develop/components/` — shared component documentation
+-   `ai_docs/develop/audits/` — code and security audit reports
 
 ------------------------------------------------------------------------
 
@@ -137,29 +197,56 @@ Development should follow the rules defined in:
 
 ------------------------------------------------------------------------
 
-# Project Status
-
-Current branch: **main**
-
-Baseline checkpoint tag before development start:
-
-checkpoint-pre-build-start
-
-This tag represents the clean project state before active development
-begins.
-
-------------------------------------------------------------------------
-
 # Development Phases
 
 Development phases are defined in:
 
 ai_docs/develop/ROADMAP.md
 
-Current focus:
+**Phase 1 — Foundation and Alignment** ✓ complete
 
-Phase 1 --- Application shell and base UI structure\
-Phase 2 --- Core domain entities and inventory model
+Delivered:
+
+-   Product definition, MVP scope, and roadmap established
+-   Folder architecture and project conventions aligned
+-   Naming standards and permission model boundaries confirmed
+-   Multi-company direction confirmed across backend and frontend
+
+**Phase 2 — Architecture Refactor** ✓ Batch 1 complete
+
+Delivered:
+
+-   Feature-based frontend structure: `src/features/`, `src/pages/`,
+    `src/shared/`
+-   Inventory feature with UI components and typed application layer
+-   Starter-template leftovers removed
+-   Reusable UI primitives isolated in `src/shared/ui`
+
+**Phase 3 — Backend and Data Architecture** — not started
+
+**Phase 4 — Authentication and Access Control** — not started
+
+**Phase 5 — Core Reference Data** — not started
+
+**Phase 6 — Inventory Model** — not started
+
+**Phase 7 — Inventory Interface** — not started
+
+**Phase 8 — Movement Workflows** — not started
+
+**Phase 9 — History and Journal** — not started
+
+**Phase 10 — Service and Write-Off** — not started
+
+**Phase 11 — Dashboard** — not started
+
+**Phase 12 — Performance and Field Reliability** — not started
+
+**Phase 13 — UX Polish and Consistency** — not started
+
+**Phase 14 — Reporting Baseline** — not started
+
+**Phase 15 — Release Readiness** — not started
 
 ------------------------------------------------------------------------
 
@@ -183,16 +270,33 @@ npm run lint
 
 ------------------------------------------------------------------------
 
-# Development Approach
+# Development Workflow
 
-Development must follow these principles:
+Development follows these principles:
 
--   follow documentation in ai_docs
+-   follow documentation in `ai_docs` before writing code
 -   work in small safe steps
 -   avoid destructive refactors
--   keep architecture clean
+-   keep architecture clean and feature-isolated
 -   maintain mobile-first usability
--   align UI with UI_PRINCIPLES.md
+-   align UI with `UI_PRINCIPLES.md`
+
+**Batch-based workflow:**
+
+-   development proceeds in named batches (e.g. Batch 1, Batch 2)
+-   one batch = one commit
+-   tests and build must be green before committing
+-   stage files explicitly: `git add <file>` per file — never `git add .`
+
+------------------------------------------------------------------------
+
+# Current Non-Goals
+
+-   no backend integration (frontend-only at this stage)
+-   no global state library (local React state only)
+-   no new UI features in Phase 2
+-   no authentication or authorization
+-   no multi-user support
 
 ------------------------------------------------------------------------
 
