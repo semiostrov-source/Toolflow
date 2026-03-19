@@ -207,6 +207,10 @@ Required widgets:
 
 The dashboard should remain simple and operational.
 
+The dashboard is part of the MVP, but it is secondary to the core operational inventory and movement workflows.
+It must not displace the main inventory-first execution order.
+The dashboard must not become the primary interaction surface of the product.
+
 ---
 
 ## 4. MVP UI Scope

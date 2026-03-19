@@ -322,3 +322,32 @@ Tasks:
 Expected Result:
 
 ToolFlow becomes ready for first real internal deployment and controlled use.
+
+## UI Execution Alignment
+
+Current active execution focus:
+- Phase 7 — Inventory Interface
+- Current UI batch sequence starts from Header and control bar
+
+UI implementation must follow the active mobile-first operational product direction.
+
+Execution order for the current inventory interface work:
+
+1. Header and control bar
+2. Filters block
+3. Inventory rows
+4. Item actions
+5. Details and states
+6. Role-based UI behavior
+7. Create flows
+
+Detailed UI execution rules and batch constraints are defined in:
+- ai_docs/develop/UI_EXECUTION_PLAN.md
+- ai_docs/design/UI_PRINCIPLES.md
+
+Execution constraint:
+
+Do not move to later roadmap phases (backend, movements, service, etc.)
+until the current UI batch sequence for Inventory is completed.
+
+UI clarity has priority over early feature expansion.

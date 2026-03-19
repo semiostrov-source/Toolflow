@@ -26,6 +26,10 @@ Before implementing anything, always treat the following files as the primary so
 - `ai_docs/develop/MVP.md`
 - `ai_docs/develop/ROADMAP.md`
 - `ai_docs/design/UI_PRINCIPLES.md`
+- `ai_docs/develop/UI_EXECUTION_PLAN.md`
+
+`UI_EXECUTION_PLAN.md` defines the current UI execution order and batch sequencing rules.
+When UI implementation decisions are ambiguous, prefer this document together with `UI_PRINCIPLES.md` and `ROADMAP.md`.
 
 If implementation ideas conflict with these documents, the documents take priority.
 
@@ -394,3 +398,21 @@ Every implementation should move ToolFlow toward being:
 - mobile-first, not desktop-dependent
 - operationally practical, not decorative
 - aligned with documented product goals
+
+## Document Precedence
+
+If AI docs conflict, resolve them in this order:
+
+1. `.cursor/rules/*`
+2. `ai_docs/develop/PRODUCT.md`
+3. `ai_docs/develop/MVP.md`
+4. `ai_docs/develop/ROADMAP.md`
+5. `ai_docs/develop/UI_EXECUTION_PLAN.md`
+6. `ai_docs/design/UI_PRINCIPLES.md`
+
+Interpretation:
+- PRODUCT defines what ToolFlow is
+- MVP defines what must be included in the first real working version
+- ROADMAP defines strategic development order
+- UI_EXECUTION_PLAN defines the current UI execution sequence
+- UI_PRINCIPLES defines visual and UX quality rules
