@@ -4,25 +4,30 @@ import { MemoryRouter } from 'react-router-dom'
 import { App } from './App'
 
 describe('App', () => {
-  it('renders brand and main navigation', () => {
+  it('renders bottom navigation with all five tabs', () => {
     render(
       <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <App />
       </MemoryRouter>,
     )
-    expect(screen.getByText('ToolFlow')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Dashboard' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Inventory' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Warehouses' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Requests' })).toBeInTheDocument()
+
+    const nav = screen.getByRole('navigation', { name: 'Main navigation' })
+    expect(nav).toBeInTheDocument()
+
+    expect(screen.getByRole('link', { name: /All items/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /My items/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Create/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Info/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Panel/ })).toBeInTheDocument()
   })
 
-  it('renders dashboard content at /', () => {
+  it('renders inventory page at default route', () => {
     render(
       <MemoryRouter initialEntries={['/']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <App />
       </MemoryRouter>,
     )
-    expect(screen.getByRole('heading', { name: 'Dashboard' })).toBeInTheDocument()
+
+    expect(screen.getByRole('heading', { name: 'Inventory' })).toBeInTheDocument()
   })
 })
