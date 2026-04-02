@@ -1,4 +1,5 @@
 export { CreatePage } from './CreatePage'
+export { LoginPage } from './LoginPage'
 export { DashboardPage } from './DashboardPage'
 export { InfoPage } from './InfoPage'
 export { InventoryPage } from './InventoryPage'
