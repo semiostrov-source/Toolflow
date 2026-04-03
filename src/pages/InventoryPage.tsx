@@ -1,292 +1,42 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import type { Item, ItemStatus } from '../features/inventory'
-import { PageHeader } from '../shared/ui'
-import {
-  InventoryToolbar,
-  InventoryFilters,
-  InventoryBulkActionsBar,
-  InventoryTable,
-  InventoryDetailsPanel,
-  mockItems,
-  changeItemStatus,
-  bulkChangeStatus,
-  syncSelectedItem,
-  type ChangeItemStatusCommand,
-  type BulkChangeStatusCommand,
-} from '../features/inventory'
+import { useState } from 'react'
+import { ToolCard, mockItems } from '../features/inventory'
 
-interface InventoryPageProps {
-  initialItems?: Item[]
-}
+export function InventoryPage() {
+  const [search, setSearch] = useState('')
 
-export function InventoryPage({ initialItems }: InventoryPageProps = {}) {
-  const searchInputRef = useRef<HTMLInputElement>(null)
-  const lastSelectedRowIdRef = useRef<string | null>(null)
-  const focusRafRef = useRef<number | null>(null)
-  const [items, setItems] = useState<Item[]>(initialItems ?? mockItems)
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [searchInput, setSearchInput] = useState('')
-  const [sortField, setSortField] = useState<'name' | 'created'>('name')
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
-  const [bulkSelectedItemIds, setBulkSelectedItemIds] = useState<string[]>([])
-  const [bulkStatus, setBulkStatus] = useState<ItemStatus | ''>('')
-
-  useEffect(() => {
-    const debounceDelay = 300
-
-    const timeoutId = window.setTimeout(() => {
-      setSearchQuery(searchInput)
-    }, debounceDelay)
-
-    return () => {
-      window.clearTimeout(timeoutId)
-    }
-  }, [searchInput])
-
-  const filteredItems = useMemo(() => {
-    const normalizedQuery = searchQuery.trim().toLowerCase()
-    return normalizedQuery
-      ? items.filter((item) => {
-          const name = item.name.toLowerCase()
-          const sku = item.sku.toLowerCase()
-
-          return (
-            name.includes(normalizedQuery) ||
-            sku.includes(normalizedQuery)
-          )
-        })
-      : items
-  }, [items, searchQuery])
-
-  const sortedItems = [...filteredItems].sort((a, b) => {
-    let compareValue = 0
-
-    if (sortField === 'name') {
-      compareValue = a.name.localeCompare(b.name)
-    } else {
-      const aTime = new Date(a.createdAt).getTime()
-      const bTime = new Date(b.createdAt).getTime()
-      compareValue = aTime - bTime
-    }
-
-    return sortDirection === 'asc' ? compareValue : -compareValue
-  })
-
-  const visibleIds = sortedItems.map((item) => item.id)
-
-  const selectedVisibleCount = visibleIds.filter((id) =>
-    bulkSelectedItemIds.includes(id),
-  ).length
-
-  const allVisibleSelected =
-    visibleIds.length > 0 && selectedVisibleCount === visibleIds.length
-
-  const someVisibleSelected =
-    selectedVisibleCount > 0 && selectedVisibleCount < visibleIds.length
-
-  const handleToggleBulkSelect = (itemId: string) => {
-    setBulkSelectedItemIds((previous) =>
-      previous.includes(itemId)
-        ? previous.filter((id) => id !== itemId)
-        : [...previous, itemId],
-    )
-  }
-
-  const handleToggleSelectAllVisible = () => {
-    setBulkSelectedItemIds((previous) => {
-      const visibleIdSet = new Set(visibleIds)
-      const previousSelectedVisibleCount = previous.filter((id) =>
-        visibleIdSet.has(id),
-      ).length
-
-      if (visibleIds.length === 0) {
-        return previous
-      }
-
-      if (previousSelectedVisibleCount === 0) {
-        const merged = new Set([...previous, ...visibleIds])
-        return Array.from(merged)
-      }
-
-      if (previousSelectedVisibleCount === visibleIds.length) {
-        return previous.filter((id) => !visibleIdSet.has(id))
-      }
-
-      const merged = new Set([...previous, ...visibleIds])
-      return Array.from(merged)
-    })
-  }
-
-  const handleClearBulkSelection = () => {
-    setBulkSelectedItemIds([])
-  }
-
-  const handleBulkStatusChange = (status: ItemStatus | '') => {
-    setBulkStatus(status)
-  }
-
-  const handleApplyBulkStatusChange = () => {
-    if (!bulkStatus) return
-
-    const command: BulkChangeStatusCommand = {
-      type: 'bulkChangeStatus',
-      itemIds: [...bulkSelectedItemIds],
-      newStatus: bulkStatus,
-    }
-    setItems(prev => bulkChangeStatus(prev, command))
-    setSelectedItem(prev => syncSelectedItem(prev, command))
-    setBulkSelectedItemIds([])
-    setBulkStatus('')
-  }
-
-  const handleSelectItem = (item: Item) => {
-    lastSelectedRowIdRef.current = item.id
-    setSelectedItem(item)
-  }
-
-  const handleCloseDetails = () => {
-    setSelectedItem(null)
-    focusRafRef.current = requestAnimationFrame(() => {
-      const row = document.querySelector<HTMLElement>(
-        `[data-row-id="${lastSelectedRowIdRef.current}"]`,
-      )
-      row?.focus()
-    })
-  }
-
-  useEffect(() => {
-    return () => {
-      if (focusRafRef.current !== null) cancelAnimationFrame(focusRafRef.current)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!selectedItem) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        handleCloseDetails()
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [selectedItem])
-
-  const handleChangeItemStatus = (itemId: string, newStatus: ItemStatus) => {
-    const command: ChangeItemStatusCommand = {
-      type: 'changeItemStatus',
-      itemId,
-      newStatus,
-    }
-    setItems(prev => changeItemStatus(prev, command))
-    setSelectedItem(prev => syncSelectedItem(prev, command))
-  }
-
-  useEffect(() => {
-    if (!selectedItem) return
-
-    const stillVisible = filteredItems.some(
-      (item) => item.id === selectedItem.id,
-    )
-
-    if (!stillVisible) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSelectedItem(null)
-    }
-  }, [filteredItems, selectedItem])
-
-  useEffect(() => {
-    const filteredIds = new Set(filteredItems.map((item) => item.id))
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setBulkSelectedItemIds((prev) => {
-      const next = prev.filter((id) => filteredIds.has(id))
-      return next.length === prev.length ? prev : next
-    })
-  }, [filteredItems])
-
-  const handleClearSearch = () => {
-    setSearchInput('')
-    searchInputRef.current?.focus()
-  }
-
-  const isFilteredEmpty = items.length > 0 && sortedItems.length === 0
+  const filtered = mockItems.filter(
+    (item) =>
+      item.name.toLowerCase().includes(search.toLowerCase()) ||
+      item.sku.toLowerCase().includes(search.toLowerCase()),
+  )
 
   return (
-    <>
-      <PageHeader
-        title="Inventory"
-        description="List of items and stock that will power daily operations."
+    <div className="px-4 pt-4 pb-2">
+      <h1 className="text-2xl font-bold text-gray-900 mb-4">Все инструменты</h1>
+
+      <input
+        type="search"
+        placeholder="Поиск..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-200 text-sm mb-4 outline-none focus:border-indigo-400"
       />
-      <InventoryToolbar
-        ref={searchInputRef}
-        searchQuery={searchInput}
-        onSearchChange={setSearchInput}
-        bulkSelectedCount={bulkSelectedItemIds.length}
-        onClearBulkSelection={handleClearBulkSelection}
-      />
-      <InventoryFilters
-        onSortFieldChange={setSortField}
-        onSortDirectionChange={setSortDirection}
-      />
-      {bulkSelectedItemIds.length > 0 && (
-        <InventoryBulkActionsBar
-          selectedCount={bulkSelectedItemIds.length}
-          onClearSelection={handleClearBulkSelection}
-          selectedStatus={bulkStatus}
-          onStatusChange={handleBulkStatusChange}
-          onApplyStatusChange={handleApplyBulkStatusChange}
-        />
-      )}
-      <div className="inventory-workspace">
-        <div className="inventory-workspace-main">
-          <div className="inventory-workspace-table">
-            <p aria-live="polite" className="inventory-search-result-count">
-              {searchQuery !== '' && sortedItems.length > 0
-                ? `${sortedItems.length} ${sortedItems.length === 1 ? 'item' : 'items'} found`
-                : ''}
-            </p>
-            <InventoryTable
-              items={sortedItems}
-              selectedItemId={selectedItem?.id}
-              onSelectItem={handleSelectItem}
-              bulkSelectedItemIds={bulkSelectedItemIds}
-              onToggleBulkSelect={handleToggleBulkSelect}
-              allVisibleSelected={allVisibleSelected}
-              someVisibleSelected={someVisibleSelected}
-              onToggleSelectAllVisible={handleToggleSelectAllVisible}
-              onChangeItemStatus={handleChangeItemStatus}
-              hideEmpty={isFilteredEmpty}
+
+      <div>
+        {filtered.length === 0 ? (
+          <p className="text-center text-gray-400 py-12">Ничего не найдено</p>
+        ) : (
+          filtered.map((item) => (
+            <ToolCard
+              key={item.id}
+              item={item}
+              onTransfer={() => {}}
+              onService={() => {}}
+              onLog={() => {}}
             />
-            <div role="status" className="inventory-search-empty-state" aria-atomic="true">
-              {isFilteredEmpty && (
-                <>
-                  <p>No inventory items match your search</p>
-                  <p>Try a different name or SKU</p>
-                </>
-              )}
-            </div>
-            {isFilteredEmpty && (
-              <div className="inventory-table-empty-actions">
-                <button
-                  type="button"
-                  onClick={handleClearSearch}
-                  aria-label="Clear search"
-                >
-                  Clear search
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="inventory-workspace-details">
-            <InventoryDetailsPanel item={selectedItem} onClose={handleCloseDetails} />
-          </div>
-        </div>
+          ))
+        )}
       </div>
-    </>
+    </div>
   )
 }

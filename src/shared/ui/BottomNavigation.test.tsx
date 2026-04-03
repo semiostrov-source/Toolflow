@@ -11,11 +11,11 @@ describe('BottomNavigation', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByRole('link', { name: /All items/ })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /My items/ })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Create/ })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Info/ })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Panel/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Все/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Мои/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Создать/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Инфо/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Панель/ })).toBeInTheDocument()
   })
 
   it('highlights the active tab', () => {
@@ -25,7 +25,7 @@ describe('BottomNavigation', () => {
       </MemoryRouter>,
     )
 
-    const allItemsLink = screen.getByRole('link', { name: /All items/ })
+    const allItemsLink = screen.getByRole('link', { name: /Все/ })
     expect(allItemsLink).toHaveClass('bottom-nav__tab--active')
   })
 
@@ -36,10 +36,10 @@ describe('BottomNavigation', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByRole('link', { name: /All items/ })).toHaveAttribute('href', '/inventory')
-    expect(screen.getByRole('link', { name: /My items/ })).toHaveAttribute('href', '/my-items')
-    expect(screen.getByRole('link', { name: /Create/ })).toHaveAttribute('href', '/create')
-    expect(screen.getByRole('link', { name: /Info/ })).toHaveAttribute('href', '/info')
-    expect(screen.getByRole('link', { name: /Panel/ })).toHaveAttribute('href', '/panel')
+    expect(screen.getByRole('link', { name: /Все/ })).toHaveAttribute('href', '/inventory')
+    expect(screen.getByRole('link', { name: /Мои/ })).toHaveAttribute('href', '/my-items')
+    expect(screen.getByRole('link', { name: /Создать/ })).toHaveAttribute('href', '/create')
+    expect(screen.getByRole('link', { name: /Инфо/ })).toHaveAttribute('href', '/info')
+    expect(screen.getByRole('link', { name: /Панель/ })).toHaveAttribute('href', '/panel')
   })
 })

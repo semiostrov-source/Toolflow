@@ -3,11 +3,13 @@ import { BottomNavigation } from '../shared/ui/BottomNavigation'
 
 export function MobileLayout() {
   return (
-    <div className="mobile-layout">
-      <main className="mobile-layout__content">
-        <Outlet />
-      </main>
-      <BottomNavigation />
+    <div className="mobile-app">
+      <div className="mobile-container">
+        <main className="mobile-main">
+          <Outlet />
+        </main>
+        <BottomNavigation />
+      </div>
     </div>
   )
 }

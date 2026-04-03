@@ -45,11 +45,11 @@ describe('App', () => {
     const nav = screen.getByRole('navigation', { name: 'Main navigation' })
     expect(nav).toBeInTheDocument()
 
-    expect(screen.getByRole('link', { name: /All items/ })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /My items/ })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Create/ })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Info/ })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Panel/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Все/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Мои/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Создать/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Инфо/ })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Панель/ })).toBeInTheDocument()
   })
 
   it('renders inventory page at default route', () => {
@@ -59,6 +59,6 @@ describe('App', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByRole('heading', { name: 'Inventory' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Все инструменты' })).toBeInTheDocument()
   })
 })

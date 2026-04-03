@@ -1,10 +1,8 @@
 export function PanelPage() {
   return (
-    <div className="panel-page">
-      <h1>Panel</h1>
-      <p className="panel-page__description">
-        Operational dashboard and quick actions.
-      </p>
+    <div className="px-4 pt-4 pb-2">
+      <h1 className="text-2xl font-bold text-gray-900 mb-4">Панель управления</h1>
+      <p className="text-gray-400 text-sm">Доступно только администратору.</p>
     </div>
   )
 }

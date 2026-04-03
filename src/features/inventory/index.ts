@@ -15,6 +15,7 @@ export { mockItems } from './mock/items';
 export { InventoryToolbar } from './components/InventoryToolbar';
 export { InventoryFilters } from './components/InventoryFilters';
 export { InventoryBulkActionsBar } from './components/InventoryBulkActionsBar';
+export { ToolCard } from './components/ToolCard';
 
 // Application layer
 export type { InventoryCommand, ChangeItemStatusCommand, BulkChangeStatusCommand } from './application';

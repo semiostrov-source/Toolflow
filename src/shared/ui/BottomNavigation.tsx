@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 const tabs = [
   {
     to: '/inventory',
-    label: 'All items',
+    label: 'Все',
     icon: (
       <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <line x1="4" y1="6" x2="20" y2="6" />
@@ -14,7 +14,7 @@ const tabs = [
   },
   {
     to: '/my-items',
-    label: 'My items',
+    label: 'Мои',
     icon: (
       <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="8" r="4" />
@@ -24,7 +24,7 @@ const tabs = [
   },
   {
     to: '/create',
-    label: 'Create',
+    label: 'Создать',
     icon: (
       <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
@@ -35,7 +35,7 @@ const tabs = [
   },
   {
     to: '/info',
-    label: 'Info',
+    label: 'Инфо',
     icon: (
       <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
@@ -46,7 +46,7 @@ const tabs = [
   },
   {
     to: '/panel',
-    label: 'Panel',
+    label: 'Панель',
     icon: (
       <svg aria-hidden="true" focusable="false" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="3" width="7" height="7" rx="1" />
