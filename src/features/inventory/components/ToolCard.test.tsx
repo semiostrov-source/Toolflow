@@ -9,6 +9,8 @@ const baseItem: Item = {
   name: 'Перфоратор Bosch',
   sku: 'PERF-001',
   unit: 'pcs',
+  category: 'Электроинструменты',
+  ownerName: 'Иван Иванов',
   status: 'available',
   createdAt: '2025-12-01T10:00:00.000Z',
 }
@@ -23,22 +25,38 @@ describe('ToolCard', () => {
   })
 
   describe('rendering', () => {
+    it('renders the tool photo', () => {
+      render(<ToolCard item={baseItem} />)
+
+      const photo = screen.getByTestId('tool-photo')
+      expect(photo).toBeInTheDocument()
+      expect(photo).toHaveClass('bg-gray-100')
+    })
+
     it('renders tool name', () => {
       render(<ToolCard item={baseItem} />)
 
-      expect(screen.getByText('Перфоратор Bosch')).toBeInTheDocument()
+      const heading = screen.getByRole('heading', { name: baseItem.name, level: 3 })
+      expect(heading).toBeInTheDocument()
+      expect(heading.tagName).toBe('H3')
     })
 
-    it('renders SKU prefixed with #', () => {
+    it('renders category and inventory number line', () => {
       render(<ToolCard item={baseItem} />)
 
-      expect(screen.getByText('#PERF-001')).toBeInTheDocument()
+      const subtitle = screen.getByText('Электроинструменты · PERF-001')
+      expect(subtitle).toBeInTheDocument()
+      expect(subtitle).toHaveTextContent('Электроинструменты')
+      expect(subtitle).toHaveTextContent('PERF-001')
+      expect(subtitle.textContent).toContain(' · ')
     })
 
-    it('renders the unit chip', () => {
+    it('renders owner label and owner name with initials', () => {
       render(<ToolCard item={baseItem} />)
 
-      expect(screen.getByText('pcs')).toBeInTheDocument()
+      expect(screen.getByText('Владелец:')).toBeInTheDocument()
+      expect(screen.getByText('Иван Иванов')).toBeInTheDocument()
+      expect(screen.getByText('ИИ')).toBeInTheDocument()
     })
 
     it('renders Передать, Сервис, Журнал action buttons', () => {
@@ -54,25 +72,26 @@ describe('ToolCard', () => {
     it('shows "Активен" for available status', () => {
       render(<ToolCard item={makeItem({ status: 'available' })} />)
 
-      expect(screen.getByText('Активен')).toBeInTheDocument()
+      expect(screen.getByTestId('tool-status-chip')).toHaveTextContent('Активен')
     })
 
     it('shows "В пути" for in_use status', () => {
       render(<ToolCard item={makeItem({ status: 'in_use' })} />)
 
-      expect(screen.getByText('В пути')).toBeInTheDocument()
+      const chip = screen.getByTestId('tool-status-chip')
+      expect(chip).toHaveTextContent('В пути')
     })
 
     it('shows "На списании" for maintenance status', () => {
       render(<ToolCard item={makeItem({ status: 'maintenance' })} />)
 
-      expect(screen.getByText('На списании')).toBeInTheDocument()
+      expect(screen.getByTestId('tool-status-chip')).toHaveTextContent('На списании')
     })
 
     it('shows "Утилизирован" for written_off status', () => {
       render(<ToolCard item={makeItem({ status: 'written_off' })} />)
 
-      expect(screen.getByText('Утилизирован')).toBeInTheDocument()
+      expect(screen.getByTestId('tool-status-chip')).toHaveTextContent('Утилизирован')
     })
   })
 
@@ -80,15 +99,24 @@ describe('ToolCard', () => {
     it('applies line-through class to tool name when status is written_off', () => {
       render(<ToolCard item={makeItem({ status: 'written_off' })} />)
 
-      const heading = screen.getByRole('heading', { name: 'Перфоратор Bosch' })
+      const heading = screen.getByRole('heading', { name: baseItem.name, level: 3 })
       expect(heading).toHaveClass('line-through')
     })
 
     it('does not apply line-through class when status is not written_off', () => {
       render(<ToolCard item={makeItem({ status: 'available' })} />)
 
-      const heading = screen.getByRole('heading', { name: 'Перфоратор Bosch' })
+      const heading = screen.getByRole('heading', { name: baseItem.name, level: 3 })
       expect(heading).not.toHaveClass('line-through')
+    })
+  })
+
+  describe('divider', () => {
+    it('renders a divider between header and actions', () => {
+      render(<ToolCard item={baseItem} />)
+
+      const divider = screen.getByTestId('tool-card-divider')
+      expect(divider).toHaveClass('border-t', 'border-gray-200')
     })
   })
 
@@ -164,6 +192,8 @@ describe('ToolCard', () => {
       await user.click(screen.getByRole('button', { name: 'Сервис' }))
 
       expect(onClick).not.toHaveBeenCalled()
+      expect(onService).toHaveBeenCalledTimes(1)
+      expect(onService).toHaveBeenCalledWith(baseItem)
     })
 
     it('does not call onClick when Журнал is clicked', async () => {
@@ -176,6 +206,8 @@ describe('ToolCard', () => {
       await user.click(screen.getByRole('button', { name: 'Журнал' }))
 
       expect(onClick).not.toHaveBeenCalled()
+      expect(onLog).toHaveBeenCalledTimes(1)
+      expect(onLog).toHaveBeenCalledWith(baseItem)
     })
 
     it('does not throw when optional callbacks are not provided and buttons are clicked', async () => {
