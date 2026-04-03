@@ -11,8 +11,11 @@ export function InventoryPage() {
   )
 
   return (
-    <div className="px-4 pt-4 pb-2">
-      <h1 className="text-2xl font-bold text-gray-900 mb-4">Все инструменты</h1>
+    <div className="px-4 pb-4">
+      <div className="pt-3 pb-2">
+        <h1 className="mb-1 text-xl font-bold text-gray-900">Все инструменты</h1>
+        <p className="mb-4 text-sm text-gray-600">Каталог и поиск по складу</p>
+      </div>
 
       <input
         type="search"
